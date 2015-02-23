@@ -78,6 +78,27 @@
 			<key>previewFolderHidden</key>
 			<true/>
 		</dict>
+		<key>Resources/Background/purple@4x.png</key>
+		<dict>
+			<key>isDirty</key>
+			<true/>
+			<key>scaleFrom</key>
+			<integer>4</integer>
+		</dict>
+		<key>Resources/Balls/Billiard_Balls_01_Blue_256x256.png</key>
+		<dict>
+			<key>isDirty</key>
+			<true/>
+			<key>scaleFrom</key>
+			<integer>4</integer>
+		</dict>
+		<key>Resources/Character/JellyBabes_01_184x256_01@4x.png</key>
+		<dict>
+			<key>isDirty</key>
+			<true/>
+			<key>scaleFrom</key>
+			<integer>4</integer>
+		</dict>
 		<key>Sprites</key>
 		<dict/>
 		<key>ccbResources</key>
