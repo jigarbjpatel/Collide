@@ -47,7 +47,7 @@
 				<key>children</key>
 				<array/>
 				<key>customClass</key>
-				<string>Character</string>
+				<string></string>
 				<key>displayName</key>
 				<string>Character</string>
 				<key>memberVarAssignmentName</key>
@@ -67,7 +67,7 @@
 					<key>collisionMask</key>
 					<array/>
 					<key>collisionType</key>
-					<string></string>
+					<string>character</string>
 					<key>cornerRadius</key>
 					<real>0.0</real>
 					<key>density</key>
@@ -136,8 +136,8 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.5</real>
-							<real>0.5</real>
+							<real>0.0</real>
+							<real>0.0</real>
 							<integer>0</integer>
 							<integer>2</integer>
 							<integer>2</integer>
@@ -175,7 +175,7 @@
 						<key>value</key>
 						<array>
 							<string></string>
-							<string>Resources/Character/JellyBabes_01_184x256_01@4x.png</string>
+							<string>Resources/Character/Yellow.png</string>
 						</array>
 					</dict>
 					<dict>

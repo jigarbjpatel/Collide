@@ -47,7 +47,7 @@
 				<key>children</key>
 				<array/>
 				<key>customClass</key>
-				<string>Ball</string>
+				<string></string>
 				<key>displayName</key>
 				<string>Ball</string>
 				<key>memberVarAssignmentName</key>
@@ -144,7 +144,7 @@
 						<key>value</key>
 						<array>
 							<string></string>
-							<string>Resources/Balls/Billiard_Balls_01_Blue_256x256.png</string>
+							<string>Resources/Balls/Blue.png</string>
 						</array>
 					</dict>
 					<dict>
@@ -180,8 +180,6 @@
 						<array/>
 					</dict>
 				</array>
-				<key>selected</key>
-				<true/>
 			</dict>
 		</array>
 		<key>customClass</key>
@@ -284,6 +282,8 @@
 				<array/>
 			</dict>
 		</array>
+		<key>selected</key>
+		<true/>
 	</dict>
 	<key>notes</key>
 	<array/>

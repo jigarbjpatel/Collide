@@ -17,5 +17,5 @@
 // stores the sprite name of the ball
 @property (nonatomic, assign) NSString* SpriteName;
 
-- (void)initBall;
+- (void)changeSprite;
 @end
