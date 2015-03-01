@@ -83,12 +83,17 @@
 			<key>scaleFrom</key>
 			<integer>4</integer>
 		</dict>
+		<key>Resources/Balls/Black.png</key>
+		<dict>
+			<key>scaleFrom</key>
+			<integer>4</integer>
+		</dict>
 		<key>Resources/Balls/Blue.png</key>
 		<dict>
 			<key>scaleFrom</key>
 			<integer>4</integer>
 		</dict>
-		<key>Resources/Character/JellyBabes_01_184x256_01@4x.png</key>
+		<key>Resources/Character/Yellow.png</key>
 		<dict>
 			<key>scaleFrom</key>
 			<integer>4</integer>

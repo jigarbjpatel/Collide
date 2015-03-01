@@ -9,9 +9,9 @@
 
 @interface MainScene : CCNode<CCPhysicsCollisionDelegate>{
     
-    float timeSinceMovement;
+
     
 }
-
+-(void)showScore;
 
 @end
