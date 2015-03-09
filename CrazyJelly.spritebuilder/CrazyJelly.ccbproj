@@ -93,6 +93,31 @@
 			<key>scaleFrom</key>
 			<integer>4</integer>
 		</dict>
+		<key>Resources/Balls/Green.png</key>
+		<dict>
+			<key>scaleFrom</key>
+			<integer>4</integer>
+		</dict>
+		<key>Resources/Balls/Pink.png</key>
+		<dict>
+			<key>scaleFrom</key>
+			<integer>4</integer>
+		</dict>
+		<key>Resources/Balls/Red.png</key>
+		<dict>
+			<key>scaleFrom</key>
+			<integer>4</integer>
+		</dict>
+		<key>Resources/Balls/White.png</key>
+		<dict>
+			<key>scaleFrom</key>
+			<integer>4</integer>
+		</dict>
+		<key>Resources/Balls/Yellow.png</key>
+		<dict>
+			<key>scaleFrom</key>
+			<integer>4</integer>
+		</dict>
 		<key>Resources/Character/Yellow.png</key>
 		<dict>
 			<key>scaleFrom</key>
