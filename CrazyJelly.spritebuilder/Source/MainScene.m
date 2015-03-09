@@ -5,6 +5,7 @@
 #define ARC4RANDOM_MAX      0x100000000
 #define ROW_SIZE    3
 #define TOTAL_COLORS 6
+#define MAX_ROWS_THAT_CAN_BE_SKIPPED 7
 static NSString *ballColors[TOTAL_COLORS] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink",@"White"};
 typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
 
@@ -14,12 +15,14 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
     NSMutableArray *_balls;
     CCLabelTTF *_scoreLabel;
     CCLabelTTF *_lifeLabel;
+    CCLabelTTF *_skipRowsLabel;
     CCPhysicsNode* _physicsNode;
     CGFloat _levelSpeed;
     CGSize _screenSize;
     int _lives;
     long _points;
-    float _timeSinceMovement;
+    float _timeSinceLastRowAdded;
+    int _rowsAddedSinceLastCollision;
     BOOL _gameOver;
     CCButton *_restartButton;
     int _lastRowBallColors[ROW_SIZE];
@@ -31,7 +34,8 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
     _gameOver = false;
     _points = 0;
     _lives = 3;
-    _timeSinceMovement = 0.0f;
+    _timeSinceLastRowAdded = 0.0f;
+    _rowsAddedSinceLastCollision = 0;
     _levelSpeed = 0.8f;
     _screenSize = [CCDirector sharedDirector].viewSize;
     self.userInteractionEnabled = TRUE;
@@ -40,6 +44,7 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
     [self initialize];
     _scoreLabel.visible = true;
     _lifeLabel.visible = true;
+    _skipRowsLabel.visible = false;
     _lastRowType = EASY;
     for(int i=0; i<ROW_SIZE; i++)
         _lastRowBallColors[i] = i;
@@ -231,14 +236,16 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
 - (void)update:(CCTime)delta{
     if(!_gameOver){
         
-        _timeSinceMovement += delta;
-        if(_timeSinceMovement > _levelSpeed){
+        _timeSinceLastRowAdded += delta;
+        
+        
+        if(_timeSinceLastRowAdded > _levelSpeed){
             //        NSString* count = [NSString stringWithFormat:@"%lu", (unsigned long)_balls.count];
             //        NSLog(@"BAlls Array Count = %@",count);
             for(CCSprite* sprite in _balls){
                 sprite.position = ccp(sprite.position.x, sprite.position.y + 10);
             }
-            _timeSinceMovement = 0.0f;
+            _timeSinceLastRowAdded = 0.0f;
             //If sprites have moved out then remove them and add new
             NSMutableArray *offScreenBalls = nil;
             
@@ -258,6 +265,24 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
             
             if(offScreenBalls.count > 0){
                 [self addNewRow];
+                _rowsAddedSinceLastCollision++;
+                if(_rowsAddedSinceLastCollision > 1){
+                    
+                    _skipRowsLabel.visible = true;
+                    _skipRowsLabel.string = [NSString stringWithFormat:@"%d", MAX_ROWS_THAT_CAN_BE_SKIPPED - _rowsAddedSinceLastCollision];
+                    if(_rowsAddedSinceLastCollision == MAX_ROWS_THAT_CAN_BE_SKIPPED){
+                        _rowsAddedSinceLastCollision = 0;
+                        _lives--;
+                        _lifeLabel.string = [NSString stringWithFormat:@"%d", _lives];
+                        _skipRowsLabel.visible = false;
+                        if(_lives == 0)
+                            [self gameOver];
+                    }
+                        
+                }
+
+                NSLog(@"_rowsAddedSinceLastCollision = %d",_rowsAddedSinceLastCollision);
+                
             }
         }
     }
@@ -275,6 +300,8 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
 -(BOOL)ccPhysicsCollisionBegin:(CCPhysicsCollisionPair *)pair
                      character:(CCNode *)character
                           ball:(CCNode *)ball {
+    _rowsAddedSinceLastCollision = 0;
+    _skipRowsLabel.visible = false;
     
     NSString* ballColor = (NSString *)ball.userObject;
     NSString* characterColor = (NSString *)character.userObject;
