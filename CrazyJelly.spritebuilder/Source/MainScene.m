@@ -3,8 +3,10 @@
 #import "Ball.h"
 
 #define ARC4RANDOM_MAX      0x100000000
-
-static NSString *ballColors[5] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink"};
+#define ROW_SIZE    3
+#define TOTAL_COLORS 6
+static NSString *ballColors[TOTAL_COLORS] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink",@"White"};
+typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
 
 @implementation MainScene{
     //Define variables here
@@ -20,8 +22,10 @@ static NSString *ballColors[5] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink"};
     float _timeSinceMovement;
     BOOL _gameOver;
     CCButton *_restartButton;
+    int _lastRowBallColors[ROW_SIZE];
+    RowType _lastRowType;
 }
-
+#pragma mark - Initialization
 - (void)didLoadFromCCB {
     _balls = [[NSMutableArray alloc] init];
     _gameOver = false;
@@ -36,12 +40,15 @@ static NSString *ballColors[5] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink"};
     [self initialize];
     _scoreLabel.visible = true;
     _lifeLabel.visible = true;
+    _lastRowType = EASY;
+    for(int i=0; i<ROW_SIZE; i++)
+        _lastRowBallColors[i] = i;
     
 }
 -(void)initialize{
     //Initialize the character
     CGFloat random = ((double)arc4random() / ARC4RANDOM_MAX); //value between 0 and 1
-    int index = (int)(random * 10.0) % 5;
+    int index = (int)(random * 10.0) % TOTAL_COLORS;
     [self addNewCharacter:ballColors[index] xPosition:0.5f];
     
     //Initialize the Balls
@@ -78,7 +85,9 @@ static NSString *ballColors[5] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink"};
     
 }
 - (void)addNewBall:(NSString *)spriteColor xPosition:(CGFloat)xPos{
-    
+    //NSLog(@"Ball Color :%@",spriteColor);
+    if(spriteColor == NULL)
+        return;
     NSString* spriteName = [NSString stringWithFormat:@"%@%@%@", @"Resources/Balls/", spriteColor, @".png"];
     
     CCSprite *sprite = [CCSprite spriteWithImageNamed:spriteName];
@@ -99,19 +108,126 @@ static NSString *ballColors[5] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink"};
 }
 
 -(void)addNewRow{
-    CGFloat random = ((double)arc4random() / ARC4RANDOM_MAX); //value between 0 and 1
-    int index = (int)(random * 10.0) % 5;
-    [self addNewBall:ballColors[index] xPosition:0.12f];
     
-    random = ((double)arc4random() / ARC4RANDOM_MAX);
-    index = (int)(random * 10.0) % 5;
-    [self addNewBall:ballColors[index]  xPosition:0.5f];
     
-    random = ((double)arc4random() / ARC4RANDOM_MAX);
-    index = (int)(random * 10.0) % 5;
-    [self addNewBall:ballColors[index]  xPosition:0.88f];
+//    CGFloat random = ((double)arc4random() / ARC4RANDOM_MAX); //value between 0 and 1
+//    int positionForColorDuplication = (int)(random * 10.0) % 3;
+//    int index = 0;
+//    //Generate an easy, medium row at random...
+//    if((int)(random * 3) % 3 == 0)
+//        positionForColorDuplication = -1;//Go for an random row
+//    
+//    if(positionForColorDuplication == 0){
+//        index = _lastRowBallColors[0];
+//    }else
+//        index = (int)(random * 10.0) % 5;
+//    [self addNewBall:ballColors[index] xPosition:0.12f];
+//    _lastRowBallColors[0] = index;
+//
+//    if(positionForColorDuplication == 1)
+//        index = _lastRowBallColors[1];
+//    else{
+//        random = ((double)arc4random() / ARC4RANDOM_MAX);
+//        index = (int)(random * 10.0) % 5;
+//    }
+//    [self addNewBall:ballColors[index]  xPosition:0.5f];
+//    _lastRowBallColors[1] = index;
+//
+//    if(positionForColorDuplication == 2)
+//        index = _lastRowBallColors[2];
+//    else{
+//        random = ((double)arc4random() / ARC4RANDOM_MAX);
+//        index = (int)(random * 10.0) % 5;
+//    }
+//    [self addNewBall:ballColors[index]  xPosition:0.88f];
+//    _lastRowBallColors[2] = index;
+    int * nextRowColors = [self getNextRowColors];
+    [self addNewBall:ballColors[nextRowColors[0]] xPosition:0.12f];
+    _lastRowBallColors[0] = nextRowColors[0];
+    [self addNewBall:ballColors[nextRowColors[1]] xPosition:0.5f];
+    _lastRowBallColors[1] = nextRowColors[1];
+    [self addNewBall:ballColors[nextRowColors[2]] xPosition:0.88f];
+    _lastRowBallColors[2] = nextRowColors[2];
+    free(nextRowColors);
 }
+//Returns array of indexes (pointing to ballColors array)
+//NOTE: Caller must free the memory
+-(int *)getNextRowColors{
+    int * nextRowColors = malloc(sizeof(int) * ROW_SIZE);
+    CGFloat random = ((double)arc4random() / ARC4RANDOM_MAX) * 10.0; //value between 0 and 10
+    if(_lastRowType == EASY){
+        //Get Medium Row i.e.
+        //One of the balls color should repeat as previous row
+        //but all 3 balls should not have same color
+        int positionForColorDuplication = (int)(random) % ROW_SIZE;
+        nextRowColors[positionForColorDuplication] = _lastRowBallColors[positionForColorDuplication];
+        for(int i = 0; i < ROW_SIZE; i++){
+            if(positionForColorDuplication != i){
+                int index = (int)(random) % TOTAL_COLORS;
+                while(index == _lastRowBallColors[positionForColorDuplication]){
+                    random = ((double)arc4random() / ARC4RANDOM_MAX) * 10.0;
+                    index = (int)(random) % TOTAL_COLORS;
+                }
+                nextRowColors[i] = index;
+            }
+        }
+        _lastRowType = MEDIUM;
+    }else if(_lastRowType == MEDIUM){
+        //Get random row
+        for(int i = 0; i < ROW_SIZE; i++){
+            random = ((double)arc4random() / ARC4RANDOM_MAX) * 10.0;
+            nextRowColors[i] = (int)random % TOTAL_COLORS;
+        }
+        _lastRowType = RANDOM;
+    }else if(_lastRowType == RANDOM){
+        //Get Tough Row i.e.
+        //One of the balls color should repeat as previous row at position where character is standing
+        //and rest 2 are random
+        
+        int positionForColorDuplication = 0;
+        if(_character.position.x > 0.66 )
+            positionForColorDuplication = 2;
+        else if(_character.position.x > 0.33 && _character.position.x < 0.66)
+            positionForColorDuplication = 1;
+        NSLog(@"Position: %f, Duplicate: %d", _character.position.x, positionForColorDuplication);
+        nextRowColors[positionForColorDuplication] = _lastRowBallColors[positionForColorDuplication];
+        for(int i = 0; i < ROW_SIZE; i++){
+            if(positionForColorDuplication != i){
+                random = ((double)arc4random() / ARC4RANDOM_MAX) * 10.0;
+                nextRowColors[i] = (int)(random) % TOTAL_COLORS;
+            }
+        }
 
+        _lastRowType = TOUGH;
+    }else{
+        //Get Easy Row i.e.
+        //All the ball colors are different and none of them is same as last row
+        int i=0,j=0,k=0;
+        BOOL usedColor = false;
+        for(i=0; i<ROW_SIZE; i++){
+            for(; j<TOTAL_COLORS; j++){
+                usedColor = false;
+                for(k=0; k<ROW_SIZE; k++){
+                    if(j == _lastRowBallColors[k]){
+                        usedColor = true;
+                        break;
+                    }
+                }
+                if(usedColor == false){
+                    nextRowColors[i] = j;
+                    j++;
+                    break;
+                }
+            }
+        }
+        _lastRowType = EASY;
+    }
+
+    NSLog(@"Next Row Colors %d, %d, %d", nextRowColors[0], nextRowColors[1], nextRowColors[2]);
+
+    return nextRowColors;
+}
+#pragma mark - Game Loop
 - (void)update:(CCTime)delta{
     if(!_gameOver){
         
@@ -127,7 +243,7 @@ static NSString *ballColors[5] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink"};
             NSMutableArray *offScreenBalls = nil;
             
             for (CCNode *ball in _balls) {
-                if(ball.position.y > (_screenSize.height)){
+                if(ball.position.y > (_screenSize.height - 50)){
                     if (!offScreenBalls) {
                         offScreenBalls = [NSMutableArray array];
                     }
@@ -146,6 +262,7 @@ static NSString *ballColors[5] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink"};
         }
     }
 }
+#pragma mark - User Interaction
 - (void)touchBegan:(CCTouch *)touch
          withEvent:(CCTouchEvent *)event {
     // get the x location of touch and move the character there.
@@ -154,7 +271,7 @@ static NSString *ballColors[5] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink"};
         _character.position = ccp(touchLocation.x/_screenSize.width,_character.position.y);
     }
 }
-
+#pragma mark - Collision Handling
 -(BOOL)ccPhysicsCollisionBegin:(CCPhysicsCollisionPair *)pair
                      character:(CCNode *)character
                           ball:(CCNode *)ball {
@@ -177,6 +294,7 @@ static NSString *ballColors[5] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink"};
     
     return TRUE;
 }
+#pragma mark - Other Game logic
 - (void)showScore
 {
     _scoreLabel.string = [NSString stringWithFormat:@"%ld", _points];
