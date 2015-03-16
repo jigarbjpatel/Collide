@@ -6,8 +6,11 @@
 #define ROW_SIZE    3
 #define TOTAL_COLORS 6
 #define MAX_ROWS_THAT_CAN_BE_SKIPPED 7
+#define MAX_SPECIAL_BALLS 3
 static NSString *ballColors[TOTAL_COLORS] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink",@"White"};
 typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
+static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",@"Life"};
+
 
 @implementation MainScene{
     //Define variables here
@@ -27,6 +30,7 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
     CCButton *_restartButton;
     int _lastRowBallColors[ROW_SIZE];
     RowType _lastRowType;
+    int _lastSpecialBallColor;
 }
 #pragma mark - Initialization
 - (void)didLoadFromCCB {
@@ -48,6 +52,7 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
     _lastRowType = EASY;
     for(int i=0; i<ROW_SIZE; i++)
         _lastRowBallColors[i] = i;
+    _lastSpecialBallColor = -1;
     
 }
 -(void)initialize{
@@ -93,6 +98,7 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
     //NSLog(@"Ball Color :%@",spriteColor);
     if(spriteColor == NULL)
         return;
+    
     NSString* spriteName = [NSString stringWithFormat:@"%@%@%@", @"Resources/Balls/", spriteColor, @".png"];
     
     CCSprite *sprite = [CCSprite spriteWithImageNamed:spriteName];
@@ -113,46 +119,33 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
 }
 
 -(void)addNewRow{
-    
-    
-//    CGFloat random = ((double)arc4random() / ARC4RANDOM_MAX); //value between 0 and 1
-//    int positionForColorDuplication = (int)(random * 10.0) % 3;
-//    int index = 0;
-//    //Generate an easy, medium row at random...
-//    if((int)(random * 3) % 3 == 0)
-//        positionForColorDuplication = -1;//Go for an random row
-//    
-//    if(positionForColorDuplication == 0){
-//        index = _lastRowBallColors[0];
-//    }else
-//        index = (int)(random * 10.0) % 5;
-//    [self addNewBall:ballColors[index] xPosition:0.12f];
-//    _lastRowBallColors[0] = index;
-//
-//    if(positionForColorDuplication == 1)
-//        index = _lastRowBallColors[1];
-//    else{
-//        random = ((double)arc4random() / ARC4RANDOM_MAX);
-//        index = (int)(random * 10.0) % 5;
-//    }
-//    [self addNewBall:ballColors[index]  xPosition:0.5f];
-//    _lastRowBallColors[1] = index;
-//
-//    if(positionForColorDuplication == 2)
-//        index = _lastRowBallColors[2];
-//    else{
-//        random = ((double)arc4random() / ARC4RANDOM_MAX);
-//        index = (int)(random * 10.0) % 5;
-//    }
-//    [self addNewBall:ballColors[index]  xPosition:0.88f];
-//    _lastRowBallColors[2] = index;
+    int random = -1;
     int * nextRowColors = [self getNextRowColors];
-    [self addNewBall:ballColors[nextRowColors[0]] xPosition:0.12f];
-    _lastRowBallColors[0] = nextRowColors[0];
-    [self addNewBall:ballColors[nextRowColors[1]] xPosition:0.5f];
-    _lastRowBallColors[1] = nextRowColors[1];
-    [self addNewBall:ballColors[nextRowColors[2]] xPosition:0.88f];
-    _lastRowBallColors[2] = nextRowColors[2];
+    //Special ball logic....
+    if(_points != 0 && _points % 15 == 0){
+        random = (int)(((double)arc4random() / ARC4RANDOM_MAX) * MAX_SPECIAL_BALLS); //value between 0 and MAX_SPECIAL_BALLS
+        
+        _lastSpecialBallColor = (_lastSpecialBallColor + 1) % MAX_SPECIAL_BALLS;
+        
+    }
+    for (int i=0; i<3; i++) {
+        _lastRowBallColors[i] = nextRowColors[i];
+    }
+    //NSLog(@"Random = %d, Special Ball = %d",random,_lastSpecialBallColor);
+    if(random != 0.0)
+        [self addNewBall:ballColors[nextRowColors[0]] xPosition:0.12f];
+    else
+        [self addNewBall:specialBallColors[_lastSpecialBallColor] xPosition:0.12f];
+    if(random != 1.0)
+        [self addNewBall:ballColors[nextRowColors[1]] xPosition:0.5f];
+    else
+        [self addNewBall:specialBallColors[_lastSpecialBallColor] xPosition:0.5f];
+    if(random != 2.0)
+        [self addNewBall:ballColors[nextRowColors[2]] xPosition:0.88f];
+    else
+        [self addNewBall:specialBallColors[_lastSpecialBallColor] xPosition:0.88f];
+    
+    
     free(nextRowColors);
 }
 //Returns array of indexes (pointing to ballColors array)
@@ -194,7 +187,7 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
             positionForColorDuplication = 2;
         else if(_character.position.x > 0.33 && _character.position.x < 0.66)
             positionForColorDuplication = 1;
-        NSLog(@"Position: %f, Duplicate: %d", _character.position.x, positionForColorDuplication);
+        // NSLog(@"Position: %f, Duplicate: %d", _character.position.x, positionForColorDuplication);
         nextRowColors[positionForColorDuplication] = _lastRowBallColors[positionForColorDuplication];
         for(int i = 0; i < ROW_SIZE; i++){
             if(positionForColorDuplication != i){
@@ -202,7 +195,7 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
                 nextRowColors[i] = (int)(random) % TOTAL_COLORS;
             }
         }
-
+        
         _lastRowType = TOUGH;
     }else{
         //Get Easy Row i.e.
@@ -227,9 +220,8 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
         }
         _lastRowType = EASY;
     }
-
-    NSLog(@"Next Row Colors %d, %d, %d", nextRowColors[0], nextRowColors[1], nextRowColors[2]);
-
+    //NSLog(@"Next Row Colors %d, %d, %d", nextRowColors[0], nextRowColors[1], nextRowColors[2]);
+    
     return nextRowColors;
 }
 #pragma mark - Game Loop
@@ -237,7 +229,6 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
     if(!_gameOver){
         
         _timeSinceLastRowAdded += delta;
-        
         
         if(_timeSinceLastRowAdded > _levelSpeed){
             //        NSString* count = [NSString stringWithFormat:@"%lu", (unsigned long)_balls.count];
@@ -264,10 +255,12 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
             }
             
             if(offScreenBalls.count > 0){
+                
                 [self addNewRow];
+                
                 _rowsAddedSinceLastCollision++;
                 if(_rowsAddedSinceLastCollision > 1){
-                    
+                    //Start the timer and check if user loses life
                     _skipRowsLabel.visible = true;
                     _skipRowsLabel.string = [NSString stringWithFormat:@"%d", MAX_ROWS_THAT_CAN_BE_SKIPPED - _rowsAddedSinceLastCollision];
                     if(_rowsAddedSinceLastCollision == MAX_ROWS_THAT_CAN_BE_SKIPPED){
@@ -278,10 +271,10 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
                         if(_lives == 0)
                             [self gameOver];
                     }
-                        
+                    
                 }
-
-                NSLog(@"_rowsAddedSinceLastCollision = %d",_rowsAddedSinceLastCollision);
+                
+                // NSLog(@"_rowsAddedSinceLastCollision = %d",_rowsAddedSinceLastCollision);
                 
             }
         }
@@ -310,16 +303,54 @@ typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
         _lives--;
         if(_lives == 0)
             [self gameOver];
+        [ball removeFromParent];
+    }else if([self getSpecialBallIndex:ballColor] != -1){
+        //Special Ball Handling
+       // NSLog(@"Special Ball %d", _lastSpecialBallColor);
+        switch (_lastSpecialBallColor) {
+            case 0://Blast
+                //Remove all same color balls
+                for(CCSprite* ball in _balls){
+                    NSString * ballColor = (NSString *)ball.userObject;
+                    if([ballColor isEqualToString:characterColor])
+                        [ball removeFromParent];
+                }
+                
+                break;
+            case 1://Lightning
+                //Remove all balls
+                for(CCSprite* ball in _balls){
+                    [ball removeFromParent];
+                }
+                break;
+            case 2://Life
+                _lives++;
+                NSLog(@"Lives %d", _lives);
+                break;
+            default:
+                break;
+        }
+        [ball removeFromParent];
     }else{
         _points++;
         [character removeFromParent];
         [self addNewCharacter:ballColor xPosition:character.position.x];
+        [ball removeFromParent];
     }
     
-    [ball removeFromParent];
+    
+    
     [self showScore];
     
     return TRUE;
+}
+-(int)getSpecialBallIndex:(NSString*) ballColor{
+    int res = -1;
+    for(int i=0; i<MAX_SPECIAL_BALLS; i++){
+        if([specialBallColors[i] isEqualToString:ballColor])
+            return i;
+    }
+    return res;
 }
 #pragma mark - Other Game logic
 - (void)showScore
