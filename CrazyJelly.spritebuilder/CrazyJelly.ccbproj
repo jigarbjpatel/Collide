@@ -83,13 +83,6 @@
 			<key>scaleFrom</key>
 			<integer>4</integer>
 		</dict>
-		<key>Resources/Balls/1up@4x.png</key>
-		<dict>
-			<key>isDirty</key>
-			<true/>
-			<key>scaleFrom</key>
-			<integer>4</integer>
-		</dict>
 		<key>Resources/Balls/Black.png</key>
 		<dict>
 			<key>scaleFrom</key>
@@ -100,7 +93,19 @@
 			<key>scaleFrom</key>
 			<integer>4</integer>
 		</dict>
+		<key>Resources/Balls/Double.png</key>
+		<dict>
+			<key>isDirty</key>
+			<true/>
+			<key>scaleFrom</key>
+			<integer>4</integer>
+		</dict>
 		<key>Resources/Balls/Green.png</key>
+		<dict>
+			<key>scaleFrom</key>
+			<integer>4</integer>
+		</dict>
+		<key>Resources/Balls/Life.png</key>
 		<dict>
 			<key>scaleFrom</key>
 			<integer>4</integer>

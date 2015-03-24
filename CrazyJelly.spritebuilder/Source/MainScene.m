@@ -6,10 +6,10 @@
 #define ROW_SIZE    3
 #define TOTAL_COLORS 6
 #define MAX_ROWS_THAT_CAN_BE_SKIPPED 7
-#define MAX_SPECIAL_BALLS 3
+#define MAX_SPECIAL_BALLS 4
 static NSString *ballColors[TOTAL_COLORS] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink",@"White"};
 typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
-static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",@"Life"};
+static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",@"Life",@"Double"};
 
 
 @implementation MainScene{
@@ -31,16 +31,18 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     int _lastRowBallColors[ROW_SIZE];
     RowType _lastRowType;
     int _lastSpecialBallColor;
+    int _pointsMultiplier;
 }
 #pragma mark - Initialization
 - (void)didLoadFromCCB {
     _balls = [[NSMutableArray alloc] init];
     _gameOver = false;
     _points = 0;
+    _pointsMultiplier = 1;
     _lives = 3;
     _timeSinceLastRowAdded = 0.0f;
     _rowsAddedSinceLastCollision = 0;
-    _levelSpeed = 0.8f;
+    _levelSpeed = 0.9f;
     _screenSize = [CCDirector sharedDirector].viewSize;
     self.userInteractionEnabled = TRUE;
     _physicsNode.collisionDelegate = self;
@@ -123,7 +125,7 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     int * nextRowColors = [self getNextRowColors];
     //Special ball logic....
     if(_points != 0 && _points % 15 == 0){
-        random = (int)(((double)arc4random() / ARC4RANDOM_MAX) * MAX_SPECIAL_BALLS); //value between 0 and MAX_SPECIAL_BALLS
+        random = (int)(((double)arc4random() / ARC4RANDOM_MAX) * 3); //value between 0 and 3 as there are 3 places where ball can be placed
         
         _lastSpecialBallColor = (_lastSpecialBallColor + 1) % MAX_SPECIAL_BALLS;
         
@@ -325,14 +327,23 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
                 break;
             case 2://Life
                 _lives++;
-                NSLog(@"Lives %d", _lives);
+                break;
+            case 3://Double 2x
+                _pointsMultiplier = _pointsMultiplier * 2;
                 break;
             default:
                 break;
         }
         [ball removeFromParent];
     }else{
-        _points++;
+        _points += _pointsMultiplier;
+        //TODO: Refactor and fine grain it more
+        if(_points >= 100)
+            _levelSpeed = 0.8f;
+        else if(_points >= 200)
+            _levelSpeed = 0.7f;
+        else if(_points >= 500)
+            _levelSpeed = 0.6f;
         [character removeFromParent];
         [self addNewCharacter:ballColor xPosition:character.position.x];
         [ball removeFromParent];
