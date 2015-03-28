@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		013E99601A9AD80100ED4D88 /* Character.m in Sources */ = {isa = PBXBuildFile; fileRef = 013E995F1A9AD80100ED4D88 /* Character.m */; };
+		0152CB821AC3A062002ED895 /* StartScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 0152CB811AC3A062002ED895 /* StartScene.m */; };
 		01DD163F1A9AD6DC00E618A6 /* Ball.m in Sources */ = {isa = PBXBuildFile; fileRef = 01DD163E1A9AD6DC00E618A6 /* Ball.m */; };
 		5B121030197484FA004C1E1D /* CrazyJellyActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B12102F197484FA004C1E1D /* CrazyJellyActivity.m */; };
 		5B121038197487F2004C1E1D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B737893E1807617C0076A88C /* AppDelegate.m */; };
@@ -153,6 +154,8 @@
 /* Begin PBXFileReference section */
 		013E995C1A9AD7B700ED4D88 /* Character.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Character.h; sourceTree = "<group>"; };
 		013E995F1A9AD80100ED4D88 /* Character.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Character.m; path = Source/Character.m; sourceTree = "<group>"; };
+		0152CB7E1AC3A02C002ED895 /* StartScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StartScene.h; sourceTree = "<group>"; };
+		0152CB811AC3A062002ED895 /* StartScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartScene.m; sourceTree = "<group>"; };
 		01DD163E1A9AD6DC00E618A6 /* Ball.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Ball.m; path = Source/Ball.m; sourceTree = "<group>"; };
 		01DD16441A9AD6F200E618A6 /* Ball.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
 		5B12100919748273004C1E1D /* libEGL.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libEGL.so; path = /usr/lib/armv7a/libEGL.so; sourceTree = SDKROOT; };
@@ -444,12 +447,14 @@
 			children = (
 				7A40362019DDEF0D007B6E8F /* Platforms */,
 				B7378992180767190076A88C /* MainScene.h */,
+				0152CB811AC3A062002ED895 /* StartScene.m */,
 				B7378993180767190076A88C /* MainScene.m */,
 				01DD16441A9AD6F200E618A6 /* Ball.h */,
 				01DD163E1A9AD6DC00E618A6 /* Ball.m */,
 				013E995C1A9AD7B700ED4D88 /* Character.h */,
 				013E995F1A9AD80100ED4D88 /* Character.m */,
 				D352B48019EC608A00829775 /* MetalShaders */,
+				0152CB7E1AC3A02C002ED895 /* StartScene.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -827,6 +832,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				01DD163F1A9AD6DC00E618A6 /* Ball.m in Sources */,
+				0152CB821AC3A062002ED895 /* StartScene.m in Sources */,
 				013E99601A9AD80100ED4D88 /* Character.m in Sources */,
 				B73789871807631A0076A88C /* main.m in Sources */,
 				7A046D8C19E8A20E004C4763 /* MainScene.m in Sources */,

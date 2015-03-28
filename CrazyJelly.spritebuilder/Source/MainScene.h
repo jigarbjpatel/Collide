@@ -8,10 +8,11 @@
 #import "CCNode.h"
 
 @interface MainScene : CCNode<CCPhysicsCollisionDelegate>{
-    
+   
 
     
 }
+
 -(void)showScore;
 
 @end

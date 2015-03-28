@@ -95,12 +95,15 @@
 		</dict>
 		<key>Resources/Balls/Double.png</key>
 		<dict>
-			<key>isDirty</key>
-			<true/>
 			<key>scaleFrom</key>
 			<integer>4</integer>
 		</dict>
 		<key>Resources/Balls/Green.png</key>
+		<dict>
+			<key>scaleFrom</key>
+			<integer>4</integer>
+		</dict>
+		<key>Resources/Balls/Heart.png</key>
 		<dict>
 			<key>scaleFrom</key>
 			<integer>4</integer>
@@ -132,6 +135,13 @@
 		</dict>
 		<key>Resources/Character/Yellow.png</key>
 		<dict>
+			<key>scaleFrom</key>
+			<integer>4</integer>
+		</dict>
+		<key>Resources/Others/Vertical+Line.png</key>
+		<dict>
+			<key>isDirty</key>
+			<true/>
 			<key>scaleFrom</key>
 			<integer>4</integer>
 		</dict>

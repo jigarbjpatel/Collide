@@ -32,6 +32,10 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     RowType _lastRowType;
     int _lastSpecialBallColor;
     int _pointsMultiplier;
+//    CCDrawNode *_line01;
+//    CCDrawNode *_line02;
+//    CCDrawNode *_line03;
+//    CCDrawNode *_line04;
 }
 #pragma mark - Initialization
 - (void)didLoadFromCCB {
@@ -42,7 +46,7 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     _lives = 3;
     _timeSinceLastRowAdded = 0.0f;
     _rowsAddedSinceLastCollision = 0;
-    _levelSpeed = 0.9f;
+    _levelSpeed = 0.8f;
     _screenSize = [CCDirector sharedDirector].viewSize;
     self.userInteractionEnabled = TRUE;
     _physicsNode.collisionDelegate = self;
@@ -56,6 +60,15 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
         _lastRowBallColors[i] = i;
     _lastSpecialBallColor = -1;
     
+//    _line01 = [CCDrawNode node];
+//    [self addChild:_line01];
+//    
+//    _line02 = [CCDrawNode node];
+//    [self addChild:_line02];
+//    _line03 = [CCDrawNode node];
+//    [self addChild:_line03];
+//    _line04 = [CCDrawNode node];
+//    [self addChild:_line04];
 }
 -(void)initialize{
     //Initialize the character
@@ -96,6 +109,7 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     _character = sprite;
     
 }
+
 - (void)addNewBall:(NSString *)spriteColor xPosition:(CGFloat)xPos{
     //NSLog(@"Ball Color :%@",spriteColor);
     if(spriteColor == NULL)
@@ -228,6 +242,26 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
 }
 #pragma mark - Game Loop
 - (void)update:(CCTime)delta{
+//    [_line01 drawSegmentFrom:ccp(_screenSize.width * .12f + 35 , 0)
+//                          to:ccp(_screenSize.width * .12f + 35, _screenSize.height)
+//                      radius:2
+//                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
+//    
+//    [_line02 drawSegmentFrom:ccp(_screenSize.width * .5f - 35 , 0)
+//                          to:ccp(_screenSize.width * .5f - 35, _screenSize.height)
+//                      radius:2
+//                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
+//    
+//    [_line03 drawSegmentFrom:ccp(_screenSize.width * .5f + 35 , 0)
+//                          to:ccp(_screenSize.width * .5f + 35, _screenSize.height)
+//                      radius:2
+//                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
+//    
+//    [_line04 drawSegmentFrom:ccp(_screenSize.width * .88f - 35 , 0)
+//                          to:ccp(_screenSize.width * .88f - 35, _screenSize.height)
+//                      radius:2
+//                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
+
     if(!_gameOver){
         
         _timeSinceLastRowAdded += delta;
@@ -288,7 +322,19 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     // get the x location of touch and move the character there.
     if(!_gameOver){
         CGPoint touchLocation = [touch locationInNode:self];
-        _character.position = ccp(touchLocation.x/_screenSize.width,_character.position.y);
+        //_character.position = ccp(touchLocation.x/_screenSize.width,_character.position.y);
+        
+        if(touchLocation.x < (_screenSize.width * .12f + 35))
+            _character.position = ccp(.12f, _character.position.y);
+        else if(touchLocation.x > (_screenSize.width * .12f + 35) && touchLocation.x < (_screenSize.width * .5f - 35))
+            _character.position = ccp(.31f, _character.position.y);
+        else if(touchLocation.x > (_screenSize.width * .5f - 35) && touchLocation.x < (_screenSize.width * .5f + 35))
+            _character.position = ccp(.5f, _character.position.y);
+        else if(touchLocation.x > (_screenSize.width * .5f + 35) && touchLocation.x < (_screenSize.width * .88f - 35))
+            _character.position = ccp(.69f, _character.position.y);
+        else if(touchLocation.x > (_screenSize.width * .88f - 35))
+            _character.position = ccp(.88f, _character.position.y);
+        
     }
 }
 #pragma mark - Collision Handling
@@ -338,11 +384,9 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     }else{
         _points += _pointsMultiplier;
         //TODO: Refactor and fine grain it more
-        if(_points >= 100)
-            _levelSpeed = 0.8f;
-        else if(_points >= 200)
+        if(_points >= 60)
             _levelSpeed = 0.7f;
-        else if(_points >= 500)
+        else if(_points >= 100)
             _levelSpeed = 0.6f;
         [character removeFromParent];
         [self addNewCharacter:ballColor xPosition:character.position.x];
@@ -385,4 +429,28 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     CCScene *scene = [CCBReader loadAsScene:@"MainScene"];
     [[CCDirector sharedDirector] replaceScene:scene];
 }
+
+//- (void)draw:(CCRenderer *)renderer transform:(const GLKMatrix4 *)transform {
+//    
+////    [_line01 drawSegmentFrom:ccp(_screenSize.width * .12f + 35 , 0)
+////                          to:ccp(_screenSize.width * .12f + 35, _screenSize.height)
+////                      radius:2
+////                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
+////    
+////    [_line02 drawSegmentFrom:ccp(_screenSize.width * .5f - 35 , 0)
+////                          to:ccp(_screenSize.width * .5f - 35, _screenSize.height)
+////                      radius:2
+////                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
+////    
+////    [_line03 drawSegmentFrom:ccp(_screenSize.width * .5f + 35 , 0)
+////                          to:ccp(_screenSize.width * .5f + 35, _screenSize.height)
+////                      radius:2
+////                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
+////    
+////    [_line04 drawSegmentFrom:ccp(_screenSize.width * .88f - 35 , 0)
+////                          to:ccp(_screenSize.width * .88f - 35, _screenSize.height)
+////                      radius:2
+////                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
+//    
+//}
 @end
