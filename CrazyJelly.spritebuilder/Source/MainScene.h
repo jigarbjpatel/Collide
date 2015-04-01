@@ -12,6 +12,7 @@
 
     
 }
+//@property (nonatomic, assign) NSInteger level;
 
 -(void)showScore;
 

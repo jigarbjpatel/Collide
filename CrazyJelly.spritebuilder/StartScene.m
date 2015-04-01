@@ -7,12 +7,18 @@
 //
 
 #import "StartScene.h"
+#import "GlobalData.h"
+
 @implementation StartScene {
 
+//    GlobalData *Globals;
 }
 
 -(void)play{
-    CCScene *gameplayScene = [CCBReader loadAsScene:@"MainScene"];
+//    Globals = [GlobalData sharedInstance];
+//    Globals.currentLevel = 1;
+    
+    CCScene *gameplayScene = [CCBReader loadAsScene:@"HelpScene"];
     [[CCDirector sharedDirector] replaceScene:gameplayScene];
 }
 @end

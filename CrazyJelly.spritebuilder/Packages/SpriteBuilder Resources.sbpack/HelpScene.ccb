@@ -10,7 +10,7 @@
 		<false/>
 	</dict>
 	<key>UUID</key>
-	<integer>5</integer>
+	<integer>7</integer>
 	<key>centeredOrigin</key>
 	<false/>
 	<key>currentResolution</key>
@@ -71,8 +71,8 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>120.49990844726562</real>
-							<real>203.73735046386719</real>
+							<real>0.0</real>
+							<real>0.0</real>
 							<integer>0</integer>
 							<integer>0</integer>
 							<integer>0</integer>
@@ -85,8 +85,8 @@
 						<string>Point</string>
 						<key>value</key>
 						<array>
-							<real>0.5</real>
-							<real>0.5</real>
+							<real>0.0</real>
+							<real>0.0</real>
 						</array>
 					</dict>
 					<dict>
@@ -96,21 +96,10 @@
 						<string>ScaleLock</string>
 						<key>value</key>
 						<array>
-							<real>7.0648446083068848</real>
-							<real>11.262908935546875</real>
+							<real>7.7750000953674316</real>
+							<real>8.9650001525878906</real>
 							<false/>
 							<integer>0</integer>
-						</array>
-					</dict>
-					<dict>
-						<key>name</key>
-						<string>skew</string>
-						<key>type</key>
-						<string>FloatXY</string>
-						<key>value</key>
-						<array>
-							<real>0.0</real>
-							<real>0.61195147037506104</real>
 						</array>
 					</dict>
 					<dict>
@@ -157,8 +146,6 @@
 						<array/>
 					</dict>
 				</array>
-				<key>selected</key>
-				<true/>
 			</dict>
 			<dict>
 				<key>UUID</key>
@@ -170,7 +157,7 @@
 				<key>customClass</key>
 				<string></string>
 				<key>displayName</key>
-				<string>scoreLabel</string>
+				<string>HelpMessage2</string>
 				<key>memberVarAssignmentName</key>
 				<string></string>
 				<key>memberVarAssignmentType</key>
@@ -192,8 +179,8 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.30000001192092896</real>
-							<real>0.80000001192092896</real>
+							<real>0.5</real>
+							<real>0.60000002384185791</real>
 							<integer>0</integer>
 							<integer>2</integer>
 							<integer>2</integer>
@@ -230,7 +217,8 @@
 						<string>Text</string>
 						<key>value</key>
 						<array>
-							<string>Your Score</string>
+							<string>Avoid balls of same color as Jelly 
+and hit balls of different color</string>
 							<false/>
 						</array>
 					</dict>
@@ -249,7 +237,7 @@
 						<string>FloatScale</string>
 						<key>value</key>
 						<array>
-							<real>24</real>
+							<real>20</real>
 							<integer>0</integer>
 						</array>
 					</dict>
@@ -260,6 +248,19 @@
 						<string>Check</string>
 						<key>value</key>
 						<false/>
+					</dict>
+					<dict>
+						<key>name</key>
+						<string>color</string>
+						<key>type</key>
+						<string>Color3</string>
+						<key>value</key>
+						<array>
+							<real>0.9412197470664978</real>
+							<real>1</real>
+							<real>0.96807825565338135</real>
+							<real>1</real>
+						</array>
 					</dict>
 					<dict>
 						<key>name</key>
@@ -366,6 +367,8 @@
 						</array>
 					</dict>
 				</array>
+				<key>selected</key>
+				<true/>
 			</dict>
 			<dict>
 				<key>UUID</key>
@@ -377,9 +380,9 @@
 				<key>customClass</key>
 				<string></string>
 				<key>displayName</key>
-				<string>score</string>
+				<string>HelpMessage1</string>
 				<key>memberVarAssignmentName</key>
-				<string>scoreLabel</string>
+				<string></string>
 				<key>memberVarAssignmentType</key>
 				<integer>1</integer>
 				<key>properties</key>
@@ -399,8 +402,8 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.75</real>
-							<real>0.80000001192092896</real>
+							<real>0.5</real>
+							<real>0.69999998807907104</real>
 							<integer>0</integer>
 							<integer>2</integer>
 							<integer>2</integer>
@@ -437,7 +440,8 @@
 						<string>Text</string>
 						<key>value</key>
 						<array>
-							<string>0</string>
+							<string>Touch to move the Jelly left and right
+</string>
 							<false/>
 						</array>
 					</dict>
@@ -456,7 +460,7 @@
 						<string>FloatScale</string>
 						<key>value</key>
 						<array>
-							<real>24</real>
+							<real>19</real>
 							<integer>0</integer>
 						</array>
 					</dict>
@@ -584,9 +588,9 @@
 				<key>customClass</key>
 				<string></string>
 				<key>displayName</key>
-				<string>Restart</string>
+				<string>GotIt</string>
 				<key>memberVarAssignmentName</key>
-				<string>restartButton</string>
+				<string></string>
 				<key>memberVarAssignmentType</key>
 				<integer>1</integer>
 				<key>properties</key>
@@ -606,8 +610,8 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.49999970197677612</real>
 							<real>0.5</real>
+							<real>0.50507044792175293</real>
 							<integer>0</integer>
 							<integer>2</integer>
 							<integer>2</integer>
@@ -644,7 +648,7 @@
 						<string>Block</string>
 						<key>value</key>
 						<array>
-							<string></string>
+							<string>loadGame</string>
 							<integer>1</integer>
 						</array>
 					</dict>
@@ -689,7 +693,7 @@
 						<string>String</string>
 						<key>value</key>
 						<array>
-							<string>Restart</string>
+							<string>Got it!</string>
 							<false/>
 						</array>
 					</dict>
@@ -902,7 +906,7 @@
 			</dict>
 		</array>
 		<key>customClass</key>
-		<string>ScoresScene</string>
+		<string>HelpScene</string>
 		<key>displayName</key>
 		<string>CCNode</string>
 		<key>memberVarAssignmentName</key>

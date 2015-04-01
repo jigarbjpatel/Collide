@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01230D031ACA1E1C00E864B4 /* LevelSelectScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 01230D021ACA1E1C00E864B4 /* LevelSelectScene.m */; };
+		01230D091ACA64BD00E864B4 /* GlobalData.m in Sources */ = {isa = PBXBuildFile; fileRef = 01230D081ACA64BD00E864B4 /* GlobalData.m */; };
+		01230D0D1ACB4DCB00E864B4 /* HelpScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 01230D0C1ACB4DCB00E864B4 /* HelpScene.m */; };
 		013E99601A9AD80100ED4D88 /* Character.m in Sources */ = {isa = PBXBuildFile; fileRef = 013E995F1A9AD80100ED4D88 /* Character.m */; };
 		0152CB821AC3A062002ED895 /* StartScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 0152CB811AC3A062002ED895 /* StartScene.m */; };
 		01DD163F1A9AD6DC00E618A6 /* Ball.m in Sources */ = {isa = PBXBuildFile; fileRef = 01DD163E1A9AD6DC00E618A6 /* Ball.m */; };
@@ -152,6 +155,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		01230CFF1ACA1DEB00E864B4 /* LevelSelectScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LevelSelectScene.h; sourceTree = "<group>"; };
+		01230D021ACA1E1C00E864B4 /* LevelSelectScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LevelSelectScene.m; path = Source/LevelSelectScene.m; sourceTree = "<group>"; };
+		01230D081ACA64BD00E864B4 /* GlobalData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GlobalData.m; path = Source/GlobalData.m; sourceTree = "<group>"; };
+		01230D0A1ACA65A400E864B4 /* GlobalData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GlobalData.h; path = Source/GlobalData.h; sourceTree = "<group>"; };
+		01230D0B1ACB4DBA00E864B4 /* HelpScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HelpScene.h; path = Source/HelpScene.h; sourceTree = "<group>"; };
+		01230D0C1ACB4DCB00E864B4 /* HelpScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpScene.m; sourceTree = "<group>"; };
 		013E995C1A9AD7B700ED4D88 /* Character.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Character.h; sourceTree = "<group>"; };
 		013E995F1A9AD80100ED4D88 /* Character.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Character.m; path = Source/Character.m; sourceTree = "<group>"; };
 		0152CB7E1AC3A02C002ED895 /* StartScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StartScene.h; sourceTree = "<group>"; };
@@ -445,16 +454,22 @@
 		B737893C1807616C0076A88C /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				01230D0A1ACA65A400E864B4 /* GlobalData.h */,
+				01230D081ACA64BD00E864B4 /* GlobalData.m */,
 				7A40362019DDEF0D007B6E8F /* Platforms */,
 				B7378992180767190076A88C /* MainScene.h */,
-				0152CB811AC3A062002ED895 /* StartScene.m */,
 				B7378993180767190076A88C /* MainScene.m */,
+				01230D0B1ACB4DBA00E864B4 /* HelpScene.h */,
+				01230D0C1ACB4DCB00E864B4 /* HelpScene.m */,
+				0152CB7E1AC3A02C002ED895 /* StartScene.h */,
+				0152CB811AC3A062002ED895 /* StartScene.m */,
+				01230CFF1ACA1DEB00E864B4 /* LevelSelectScene.h */,
+				01230D021ACA1E1C00E864B4 /* LevelSelectScene.m */,
 				01DD16441A9AD6F200E618A6 /* Ball.h */,
 				01DD163E1A9AD6DC00E618A6 /* Ball.m */,
 				013E995C1A9AD7B700ED4D88 /* Character.h */,
 				013E995F1A9AD80100ED4D88 /* Character.m */,
 				D352B48019EC608A00829775 /* MetalShaders */,
-				0152CB7E1AC3A02C002ED895 /* StartScene.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -832,9 +847,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				01DD163F1A9AD6DC00E618A6 /* Ball.m in Sources */,
+				01230D0D1ACB4DCB00E864B4 /* HelpScene.m in Sources */,
 				0152CB821AC3A062002ED895 /* StartScene.m in Sources */,
+				01230D091ACA64BD00E864B4 /* GlobalData.m in Sources */,
 				013E99601A9AD80100ED4D88 /* Character.m in Sources */,
 				B73789871807631A0076A88C /* main.m in Sources */,
+				01230D031ACA1E1C00E864B4 /* LevelSelectScene.m in Sources */,
 				7A046D8C19E8A20E004C4763 /* MainScene.m in Sources */,
 				5B121038197487F2004C1E1D /* AppDelegate.m in Sources */,
 			);

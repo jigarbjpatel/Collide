@@ -1,19 +1,20 @@
 #import "MainScene.h"
 #import "Character.h"
 #import "Ball.h"
-
+#import "GlobalData.h"
 #define ARC4RANDOM_MAX      0x100000000
 #define ROW_SIZE    3
 #define TOTAL_COLORS 6
-#define MAX_ROWS_THAT_CAN_BE_SKIPPED 7
+#define MAX_ROWS_THAT_CAN_BE_SKIPPED 5
 #define MAX_SPECIAL_BALLS 4
 static NSString *ballColors[TOTAL_COLORS] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink",@"White"};
 typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
 static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",@"Life",@"Double"};
-
+//static int MAX_ROWS_THAT_CAN_BE_SKIPPED = 5;
 
 @implementation MainScene{
     //Define variables here
+    GlobalData *Globals;
     CCSprite *_character;
     NSMutableArray *_balls;
     CCLabelTTF *_scoreLabel;
@@ -32,13 +33,19 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     RowType _lastRowType;
     int _lastSpecialBallColor;
     int _pointsMultiplier;
-//    CCDrawNode *_line01;
-//    CCDrawNode *_line02;
-//    CCDrawNode *_line03;
-//    CCDrawNode *_line04;
+    
+   // NSArray *_levelScores;
+    int _levelScores[6];
+    CCSprite *_playImage, *_pauseImage;
+    BOOL _paused;
+    
+    CCLabelTTF *_targetMessageLabel;
+    NSString *_helpMessage;
 }
 #pragma mark - Initialization
 - (void)didLoadFromCCB {
+    Globals = [GlobalData sharedInstance];
+
     _balls = [[NSMutableArray alloc] init];
     _gameOver = false;
     _points = 0;
@@ -51,7 +58,8 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     self.userInteractionEnabled = TRUE;
     _physicsNode.collisionDelegate = self;
     _physicsNode.debugDraw = false;
-    [self initialize];
+    
+    
     _scoreLabel.visible = true;
     _lifeLabel.visible = true;
     _skipRowsLabel.visible = false;
@@ -60,17 +68,36 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
         _lastRowBallColors[i] = i;
     _lastSpecialBallColor = -1;
     
-//    _line01 = [CCDrawNode node];
-//    [self addChild:_line01];
-//    
-//    _line02 = [CCDrawNode node];
-//    [self addChild:_line02];
-//    _line03 = [CCDrawNode node];
-//    [self addChild:_line03];
-//    _line04 = [CCDrawNode node];
-//    [self addChild:_line04];
+//    _levelScores = @[@-1, @10, @20, @30, @50, @100];
+    _levelScores[0] = -1;
+    _levelScores[1] = 10;
+    _levelScores[2] = 20;
+    _levelScores[3] = 30;
+    _levelScores[4] = 50;
+    _levelScores[5] = 100;
+    _paused = false;
+    
+    _targetMessageLabel.visible = true;
+    
+//    if(Globals.currentLevel == 1){
+//        [_targetMessageLabel setValue:<#(id)#> forKey:label ;
+//    }else{
+//        _targetMessageLabel.visible = false;
+//    }
+    if(Globals.currentLevel == 1)
+        _pauseImage.visible = false;
+    else
+        _pauseImage.visible = true;
+    [self performSelector:@selector(initialize) withObject:nil afterDelay:1.5];
+   
+    //[self initialize];
+    
+    _helpMessage = @"Move the Jelly by touchnig left or right!";
+    
+    Globals.levelCleared = false;
 }
 -(void)initialize{
+    _targetMessageLabel.visible = false;
     //Initialize the character
     CGFloat random = ((double)arc4random() / ARC4RANDOM_MAX); //value between 0 and 1
     int index = (int)(random * 10.0) % TOTAL_COLORS;
@@ -242,31 +269,21 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
 }
 #pragma mark - Game Loop
 - (void)update:(CCTime)delta{
-//    [_line01 drawSegmentFrom:ccp(_screenSize.width * .12f + 35 , 0)
-//                          to:ccp(_screenSize.width * .12f + 35, _screenSize.height)
-//                      radius:2
-//                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
-//    
-//    [_line02 drawSegmentFrom:ccp(_screenSize.width * .5f - 35 , 0)
-//                          to:ccp(_screenSize.width * .5f - 35, _screenSize.height)
-//                      radius:2
-//                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
-//    
-//    [_line03 drawSegmentFrom:ccp(_screenSize.width * .5f + 35 , 0)
-//                          to:ccp(_screenSize.width * .5f + 35, _screenSize.height)
-//                      radius:2
-//                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
-//    
-//    [_line04 drawSegmentFrom:ccp(_screenSize.width * .88f - 35 , 0)
-//                          to:ccp(_screenSize.width * .88f - 35, _screenSize.height)
-//                      radius:2
-//                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
 
     if(!_gameOver){
         
         _timeSinceLastRowAdded += delta;
         
         if(_timeSinceLastRowAdded > _levelSpeed){
+           
+            if(Globals.currentLevel == 1){
+                _targetMessageLabel.visible = false;
+                
+                [self showMessage:_helpMessage  atPosition:CGPointMake(_screenSize.width/2, _screenSize.height/2)];
+                [[CCDirector sharedDirector] performSelector:@selector(resume) withObject:nil afterDelay:1.5];
+                [[CCDirector sharedDirector] pause];
+                _helpMessage = [NSString stringWithFormat:@"%@%@",@"Collide with a ball of any color\n other than ", (NSString *)_character.userObject];
+            }
             //        NSString* count = [NSString stringWithFormat:@"%lu", (unsigned long)_balls.count];
             //        NSLog(@"BAlls Array Count = %@",count);
             for(CCSprite* sprite in _balls){
@@ -297,6 +314,7 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
                 _rowsAddedSinceLastCollision++;
                 if(_rowsAddedSinceLastCollision > 1){
                     //Start the timer and check if user loses life
+                    
                     _skipRowsLabel.visible = true;
                     _skipRowsLabel.string = [NSString stringWithFormat:@"%d", MAX_ROWS_THAT_CAN_BE_SKIPPED - _rowsAddedSinceLastCollision];
                     if(_rowsAddedSinceLastCollision == MAX_ROWS_THAT_CAN_BE_SKIPPED){
@@ -304,12 +322,15 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
                         _lives--;
                         _lifeLabel.string = [NSString stringWithFormat:@"%d", _lives];
                         _skipRowsLabel.visible = false;
+                        
+                        _helpMessage = @"Oh no! Jelly just lost one life :(\nJelly can't live long without colliding.\nKeep monitoring the timer at top right.";
+                        
+
                         if(_lives == 0)
                             [self gameOver];
+
                     }
-                    
                 }
-                
                 // NSLog(@"_rowsAddedSinceLastCollision = %d",_rowsAddedSinceLastCollision);
                 
             }
@@ -323,18 +344,36 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     if(!_gameOver){
         CGPoint touchLocation = [touch locationInNode:self];
         //_character.position = ccp(touchLocation.x/_screenSize.width,_character.position.y);
+        //Check if Pause/Play image has been cicked
+        CGRect playPauseRect =  [_pauseImage boundingBox];
         
-        if(touchLocation.x < (_screenSize.width * .12f + 35))
-            _character.position = ccp(.12f, _character.position.y);
-        else if(touchLocation.x > (_screenSize.width * .12f + 35) && touchLocation.x < (_screenSize.width * .5f - 35))
-            _character.position = ccp(.31f, _character.position.y);
-        else if(touchLocation.x > (_screenSize.width * .5f - 35) && touchLocation.x < (_screenSize.width * .5f + 35))
-            _character.position = ccp(.5f, _character.position.y);
-        else if(touchLocation.x > (_screenSize.width * .5f + 35) && touchLocation.x < (_screenSize.width * .88f - 35))
-            _character.position = ccp(.69f, _character.position.y);
-        else if(touchLocation.x > (_screenSize.width * .88f - 35))
-            _character.position = ccp(.88f, _character.position.y);
-        
+        if (CGRectContainsPoint(playPauseRect,touchLocation)){
+            if(!_paused){
+                _paused = true;
+                [[CCDirector sharedDirector] pause];
+                _pauseImage.visible = false;
+                _playImage.visible = true;
+            }else{
+                _paused = false;
+                [[CCDirector sharedDirector] resume];
+                _pauseImage.visible = true;
+                _playImage.visible = false;
+
+            }
+        }else if (!_paused){
+            _helpMessage = [NSString stringWithFormat:@"%@%@",@"Collide with a ball of any color\n other than ", (NSString *)_character.userObject];
+            
+            if(touchLocation.x < (_screenSize.width * .12f + 35))
+                _character.position = ccp(.12f, _character.position.y);
+            else if(touchLocation.x > (_screenSize.width * .12f + 35) && touchLocation.x < (_screenSize.width * .5f - 35))
+                _character.position = ccp(.31f, _character.position.y);
+            else if(touchLocation.x > (_screenSize.width * .5f - 35) && touchLocation.x < (_screenSize.width * .5f + 35))
+                _character.position = ccp(.5f, _character.position.y);
+            else if(touchLocation.x > (_screenSize.width * .5f + 35) && touchLocation.x < (_screenSize.width * .88f - 35))
+                _character.position = ccp(.69f, _character.position.y);
+            else if(touchLocation.x > (_screenSize.width * .88f - 35))
+                _character.position = ccp(.88f, _character.position.y);
+        }
     }
 }
 #pragma mark - Collision Handling
@@ -344,14 +383,20 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     _rowsAddedSinceLastCollision = 0;
     _skipRowsLabel.visible = false;
     
+    
     NSString* ballColor = (NSString *)ball.userObject;
     NSString* characterColor = (NSString *)character.userObject;
     
     if([ballColor isEqualToString:characterColor]){
+        
+        
         _lives--;
         if(_lives == 0)
             [self gameOver];
         [ball removeFromParent];
+        
+        _helpMessage = @"Oh no! Jelly just lost one life :(\nDo not collide with ball\n of same color as Jelly";
+
     }else if([self getSpecialBallIndex:ballColor] != -1){
         //Special Ball Handling
        // NSLog(@"Special Ball %d", _lastSpecialBallColor);
@@ -370,6 +415,7 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
                 for(CCSprite* ball in _balls){
                     [ball removeFromParent];
                 }
+               
                 break;
             case 2://Life
                 _lives++;
@@ -381,8 +427,19 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
                 break;
         }
         [ball removeFromParent];
+        
     }else{
         _points += _pointsMultiplier;
+        
+        _helpMessage = [NSString stringWithFormat:@"%@%@", @"Yes! Got one point :)\nNotice the color of Jelly.\nIt changed to ", ballColor];
+        
+        //Check the level and stop the game if required
+        //NSLog(@"Level = %d", Globals.currentLevel);
+        //NSLog(@"Points Required %ld", (long)_levelScores[Globals.currentLevel]);
+        if(Globals.currentLevel != 0 && _points >= (long)_levelScores[Globals.currentLevel] ) {
+            Globals.levelCleared = true;
+            [self gameOver];
+        }
         //TODO: Refactor and fine grain it more
         if(_points >= 60)
             _levelSpeed = 0.7f;
@@ -392,8 +449,6 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
         [self addNewCharacter:ballColor xPosition:character.position.x];
         [ball removeFromParent];
     }
-    
-    
     
     [self showScore];
     
@@ -408,20 +463,24 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     return res;
 }
 #pragma mark - Other Game logic
-- (void)showScore
-{
+- (void)showScore{
     _scoreLabel.string = [NSString stringWithFormat:@"%ld", _points];
     _lifeLabel.string = [NSString stringWithFormat:@"%d", _lives];
 }
 - (void)gameOver {
     if (!_gameOver) {
         _gameOver = TRUE;
-        _restartButton.visible = TRUE;
+        //_restartButton.visible = TRUE;
         
         [_character removeFromParent];
         for (CCSprite* ball in _balls) {
             [ball removeFromParent];
         }
+        
+        Globals.currentPoints = _points;
+
+        CCScene *scene = [CCBReader loadAsScene:@"LevelSelectScene"];
+        [[CCDirector sharedDirector] replaceScene:scene];
     }
 }
 
@@ -430,27 +489,22 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     [[CCDirector sharedDirector] replaceScene:scene];
 }
 
-//- (void)draw:(CCRenderer *)renderer transform:(const GLKMatrix4 *)transform {
-//    
-////    [_line01 drawSegmentFrom:ccp(_screenSize.width * .12f + 35 , 0)
-////                          to:ccp(_screenSize.width * .12f + 35, _screenSize.height)
-////                      radius:2
-////                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
-////    
-////    [_line02 drawSegmentFrom:ccp(_screenSize.width * .5f - 35 , 0)
-////                          to:ccp(_screenSize.width * .5f - 35, _screenSize.height)
-////                      radius:2
-////                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
-////    
-////    [_line03 drawSegmentFrom:ccp(_screenSize.width * .5f + 35 , 0)
-////                          to:ccp(_screenSize.width * .5f + 35, _screenSize.height)
-////                      radius:2
-////                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
-////    
-////    [_line04 drawSegmentFrom:ccp(_screenSize.width * .88f - 35 , 0)
-////                          to:ccp(_screenSize.width * .88f - 35, _screenSize.height)
-////                      radius:2
-////                       color:[CCColor colorWithRed:128 green:25/255 blue:3]];
-//    
-//}
+-(void) showMessage:(NSString*)message atPosition:(CGPoint)position {
+    CCLabelTTF *lblForMessage = [CCLabelTTF labelWithString:message fontName:@"Helvetica" fontSize:18];
+    
+    lblForMessage.position = position;
+    
+    
+    [self addChild:lblForMessage];
+    
+    CCActionFadeOut *fadeAction = [CCActionFadeOut actionWithDuration:0.75];
+    CCActionMoveBy *moveUpAction = [CCActionMoveBy actionWithDuration:0.75 position:ccp(0, 10)];
+    CCActionRemove *removeAction = [CCActionRemove action];
+    
+    CCActionSpawn *spawnAction = [CCActionSpawn actionWithArray:@[fadeAction, moveUpAction]];
+    CCActionSequence *sequenceAction = [CCActionSequence actionWithArray:@[spawnAction, removeAction]];
+    
+    [lblForMessage runAction:sequenceAction];
+}
+
 @end
