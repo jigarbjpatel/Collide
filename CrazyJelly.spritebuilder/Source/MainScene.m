@@ -70,14 +70,14 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     
 //    _levelScores = @[@-1, @10, @20, @30, @50, @100];
     _levelScores[0] = -1;
-    _levelScores[1] = 10;
+    _levelScores[1] = 5;
     _levelScores[2] = 20;
     _levelScores[3] = 30;
     _levelScores[4] = 50;
     _levelScores[5] = 100;
     _paused = false;
     
-    _targetMessageLabel.visible = true;
+    
     
 //    if(Globals.currentLevel == 1){
 //        [_targetMessageLabel setValue:<#(id)#> forKey:label ;
@@ -88,9 +88,13 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
         _pauseImage.visible = false;
     else
         _pauseImage.visible = true;
-    [self performSelector:@selector(initialize) withObject:nil afterDelay:1.5];
-   
-    //[self initialize];
+    
+    [self setTargetMessage];
+    //Wait for user to read target message
+    if(Globals.currentLevel != 0)
+        [self performSelector:@selector(initialize) withObject:nil afterDelay:1.5];
+    else
+        [self initialize]; // For infinite level, initialize immediately
     
     _helpMessage = @"Move the Jelly by touchnig left or right!";
     
@@ -134,7 +138,8 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     [_physicsNode addChild:sprite];
     
     _character = sprite;
-    
+    CCActionFadeIn *fadeInAction = [CCActionFadeIn actionWithDuration:0.25];
+    [_character runAction:fadeInAction];
 }
 
 - (void)addNewBall:(NSString *)spriteColor xPosition:(CGFloat)xPos{
@@ -391,6 +396,10 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
         
         
         _lives--;
+        /* Bounce Scene Animation */
+        [self bounceScene];
+        
+        
         if(_lives == 0)
             [self gameOver];
         [ball removeFromParent];
@@ -445,9 +454,16 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
             _levelSpeed = 0.7f;
         else if(_points >= 100)
             _levelSpeed = 0.6f;
-        [character removeFromParent];
-        [self addNewCharacter:ballColor xPosition:character.position.x];
+        //[character removeFromParent];
+        //[self addNewCharacter:ballColor xPosition:character.position.x];
         [ball removeFromParent];
+    
+        CCActionFadeOut *fadeOutAction = [CCActionFadeOut actionWithDuration:0.25];
+        CCActionRemove *removeAction = [CCActionRemove action];
+        CCActionSequence *sequenceAction = [CCActionSequence actionWithArray:@[fadeOutAction, removeAction]];
+        
+        [character runAction:sequenceAction];
+        [self addNewCharacter:ballColor xPosition:character.position.x];
     }
     
     [self showScore];
@@ -506,5 +522,37 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     
     [lblForMessage runAction:sequenceAction];
 }
-
+-(void)setTargetMessage{
+    _targetMessageLabel.visible = true;
+    switch (Globals.currentLevel) {
+        case 1:
+            [_targetMessageLabel setString:@"Target: 5 points"];
+            break;
+        case 2:
+            [_targetMessageLabel setString:@"Target: 20 points"];
+            break;
+        case 3:
+            [_targetMessageLabel setString:@"Target: 30 points"];
+            break;
+        case 4:
+            [_targetMessageLabel setString:@"Target: 50 points"];
+            break;
+        case 5:
+            [_targetMessageLabel setString:@"Target: 100 points"];
+            break;
+        default:
+            _targetMessageLabel.visible = false;
+            break;
+    }
+}
+-(void) bounceScene{
+    CCActionMoveBy *moveBy = [CCActionMoveBy actionWithDuration:0.2f position:ccp(-5, 5)];
+    CCActionInterval *reverseMovement = [moveBy reverse];
+    CCActionSequence *shakeSequence = [CCActionSequence actionWithArray:@[moveBy, reverseMovement]];
+    CCActionEaseBounce *bounce = [CCActionEaseBounce actionWithAction:shakeSequence];
+    [self runAction:bounce];
+    
+    CCActionRotateBy *rotateBy = [CCActionRotateBy actionWithDuration:0.2f angle:360];
+    [_character runAction:rotateBy];
+}
 @end

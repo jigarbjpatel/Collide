@@ -17,7 +17,7 @@
 }
 
 -(void)loadGame{
-    CCScene *gameplayScene = [CCBReader loadAsScene:@"MainScene"];
+    CCScene *gameplayScene = [CCBReader loadAsScene:@"LevelSelectScene"];
     [[CCDirector sharedDirector] replaceScene:gameplayScene];
     
 }
