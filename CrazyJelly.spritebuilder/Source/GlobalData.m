@@ -33,7 +33,7 @@ static GlobalData *sharedInstance = nil;
 
 -(id) init{
     if (self = [super init]) {
-        currentLevel = 1;
+        currentLevel = 0;
         currentPoints = 0;
         levelCleared = false;
     }

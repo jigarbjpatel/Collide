@@ -104,17 +104,6 @@
 					</dict>
 					<dict>
 						<key>name</key>
-						<string>skew</string>
-						<key>type</key>
-						<string>FloatXY</string>
-						<key>value</key>
-						<array>
-							<real>0.0</real>
-							<real>0.61195147037506104</real>
-						</array>
-					</dict>
-					<dict>
-						<key>name</key>
 						<string>spriteFrame</string>
 						<key>type</key>
 						<string>SpriteFrame</string>
@@ -1236,7 +1225,7 @@
 				<key>displayName</key>
 				<string>bestScoreLabelText</string>
 				<key>memberVarAssignmentName</key>
-				<string>_ bestScoreLabelText</string>
+				<string>_bestScoreLabelText</string>
 				<key>memberVarAssignmentType</key>
 				<integer>1</integer>
 				<key>properties</key>
@@ -1256,7 +1245,7 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.26875001192092896</real>
+							<real>0.30000001192092896</real>
 							<real>0.60000002384185791</real>
 							<integer>0</integer>
 							<integer>2</integer>
@@ -2099,7 +2088,7 @@ Play again!!!</string>
 						<key>displayName</key>
 						<string>L0</string>
 						<key>memberVarAssignmentName</key>
-						<string>_l0Button</string>
+						<string>_l6Button</string>
 						<key>memberVarAssignmentType</key>
 						<integer>1</integer>
 						<key>properties</key>
@@ -2157,7 +2146,7 @@ Play again!!!</string>
 								<string>Block</string>
 								<key>value</key>
 								<array>
-									<string>level0</string>
+									<string>level6</string>
 									<integer>1</integer>
 								</array>
 							</dict>
@@ -2412,6 +2401,8 @@ Play again!!!</string>
 								</array>
 							</dict>
 						</array>
+						<key>selected</key>
+						<true/>
 					</dict>
 					<dict>
 						<key>UUID</key>
@@ -4205,8 +4196,6 @@ Play again!!!</string>
 						</array>
 					</dict>
 				</array>
-				<key>selected</key>
-				<true/>
 			</dict>
 		</array>
 		<key>customClass</key>

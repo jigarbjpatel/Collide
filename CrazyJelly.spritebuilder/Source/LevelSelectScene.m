@@ -14,60 +14,90 @@
     CCLabelTTF *_scoreLabelText, *_scoreLabelValue;
     CCLabelTTF *_bestScoreLabelText, *_bestScoreLabelValue;
     CCLabelTTF *_successMessageLabel, *_failureMessageLabel;
-    CCButton *_l0Button, *_l1Button, *_l2Button, *_l3Button, *_l4Button, *_l5Button, *_nextButton;
+    CCButton *_l6Button, *_l1Button, *_l2Button, *_l3Button, *_l4Button, *_l5Button, *_nextButton;
     CCButton *_playAgainButton;
     NSMutableArray *_levelButtons;
     CCLayoutBox *_levelSelectLayoutBox;
+    NSUserDefaults *prefs;
 }
 #pragma mark - Initialization
 - (void)didLoadFromCCB {
     Globals = [GlobalData sharedInstance];
-    
-//    _scoreLabelText.visible = false;
-//    _scoreLabelValue.visible = false;
-//    _bestScoreLabelText.visible = false;
-//    _bestScoreLabelValue.visible = false;
-//    _successMessageLabel.visible = false;
-//    _failureMessageLabel.visible = false;
-//    _playAgainButton.visible = false;
-//    _nextButton.visible = false;
+    prefs = [NSUserDefaults standardUserDefaults];
+    NSInteger highestLevelCleared = [prefs integerForKey:@"highestLevelCleared"];
     
     _scoreLabelValue.string = [NSString stringWithFormat:@"%ld", Globals.currentPoints];
-    //TODO: BAsed on maxLevelCleared value from NSUserDefaults, enable or disable the levels
+    NSInteger bestScore = [prefs integerForKey:@"bestScore"];
+    if(Globals.currentPoints > bestScore){
+        bestScore = Globals.currentPoints;
+        [prefs setInteger:bestScore forKey:@"bestScore"];
+    }
+    _bestScoreLabelValue.string = [NSString stringWithFormat:@"%ld", bestScore];
+
     _levelButtons = [[NSMutableArray alloc] init];
     [_levelButtons addObject:_l1Button];
     [_levelButtons addObject:_l2Button];
     [_levelButtons addObject:_l3Button];
     [_levelButtons addObject:_l4Button];
     [_levelButtons addObject:_l5Button];
+    [_levelButtons addObject:_l6Button];
     for(CCButton *button in _levelButtons)
         button.enabled = false;
     
-    _l0Button.enabled = true;
-    
-    //TODO: If last level cleared then only enable next button
-    // FOr the infinite level, it is cleared if the current score beats best score
-    if(Globals.levelCleared){
-        _nextButton.enabled = true;
-        _successMessageLabel.visible = true;
+    if(Globals.currentLevel == 0){
+        //Begining of game
+        _nextButton.enabled = false;
+        _playAgainButton.enabled = false;
+        _successMessageLabel.visible = false;
         _failureMessageLabel.visible = false;
-        for(int i=0; i<=Globals.currentLevel; i++){
-            CCButton *button = _levelButtons[i];
-            button.enabled = true;
+        
+        Globals.currentLevel = highestLevelCleared;
+        if(highestLevelCleared == 6){ //Last Level
+            _nextButton.enabled = true;
+            _playAgainButton.enabled = true;
+            for(CCButton *button in _levelButtons)
+                button.enabled = true;
         }
     }else{
-        _nextButton.enabled = false;
-        _successMessageLabel.visible = false;
-        _failureMessageLabel.visible = true;
-        for(int i=0; i<Globals.currentLevel; i++){
-            CCButton *button = _levelButtons[i];
-            button.enabled = true;
+        if(Globals.levelCleared){
+            
+            if(highestLevelCleared < Globals.currentLevel){
+                [prefs setInteger:Globals.currentLevel forKey:@"highestLevelCleared"];
+                highestLevelCleared = Globals.currentLevel;
+            }
+            
+            if(highestLevelCleared != 0){
+                _nextButton.enabled = true;
+                for(int i = 1; i <= highestLevelCleared; i++){
+                    CCButton *button = _levelButtons[i-1];
+                    button.enabled = true;
+                }
+                //Enable new level
+                if(highestLevelCleared < 6){
+                    CCButton *button = _levelButtons[highestLevelCleared];
+                    button.enabled = true;
+                }
+                if(highestLevelCleared == 6){ //Last Level
+                    _successMessageLabel.visible = false;
+                    _failureMessageLabel.visible = false;
+                }else{
+                    _successMessageLabel.visible = true;
+                    _failureMessageLabel.visible = false;
+                }
+            }
+        }else{
+            
+            _nextButton.enabled = false;
+            _successMessageLabel.visible = false;
+            _failureMessageLabel.visible = true;
+            for(int i=1; i<=Globals.currentLevel; i++){
+                CCButton *button = _levelButtons[i-1];
+                button.enabled = true;
+            }
+            
         }
+
     }
-//    if(Globals.currentLevel == 0){
-//        _successMessageLabel.visible = false;
-//        _failureMessageLabel.visible = false;
-//    }
     
 }
 
@@ -80,12 +110,12 @@
     if(Globals.currentLevel < 6){
         Globals.currentLevel++;
     }else{
-        Globals.currentLevel = 0;
+        Globals.currentLevel = 6; // Last Level
     }
     [self restart];
 }
--(void)level0{
-    Globals.currentLevel = 0;
+-(void)level6{
+    Globals.currentLevel = 6;
     [self restart];
 }
 - (void)level1{

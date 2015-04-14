@@ -445,7 +445,7 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
         //Check the level and stop the game if required
         //NSLog(@"Level = %d", Globals.currentLevel);
         //NSLog(@"Points Required %ld", (long)_levelScores[Globals.currentLevel]);
-        if(Globals.currentLevel != 0 && _points >= (long)_levelScores[Globals.currentLevel] ) {
+        if(Globals.currentLevel != 6 && _points >= (long)_levelScores[Globals.currentLevel] ) {
             Globals.levelCleared = true;
             [self gameOver];
         }
@@ -494,7 +494,10 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
         }
         
         Globals.currentPoints = _points;
-
+        
+        if(Globals.currentLevel == 6) //Last Level
+            Globals.levelCleared = true;
+        
         CCScene *scene = [CCBReader loadAsScene:@"LevelSelectScene"];
         [[CCDirector sharedDirector] replaceScene:scene];
     }
