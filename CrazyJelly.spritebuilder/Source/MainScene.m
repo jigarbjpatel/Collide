@@ -7,13 +7,20 @@
 #define TOTAL_COLORS 6
 #define MAX_ROWS_THAT_CAN_BE_SKIPPED 5
 #define MAX_SPECIAL_BALLS 4
+#define MAX_MUSHROOMS_AVAILABLE 4
+#define MAX_BALLS_IN_ROW 3
+#define SPECIALBALL_FREQUENCY 15
+#define MUSHROOM_FREQUENCY 3
+#define START_MUSHROOM_LEVEL 100
+
 static NSString *ballColors[TOTAL_COLORS] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink",@"White"};
 typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
 static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",@"Life",@"Double"};
+static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
 //static int MAX_ROWS_THAT_CAN_BE_SKIPPED = 5;
 
 @implementation MainScene{
-    //Define variables here
+    
     GlobalData *Globals;
     CCSprite *_character;
     NSMutableArray *_balls;
@@ -34,13 +41,15 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     int _lastSpecialBallColor;
     int _pointsMultiplier;
     
-   // NSArray *_levelScores;
+// NSArray *_levelScores;
     int _levelScores[6];
     CCSprite *_playImage, *_pauseImage;
     BOOL _paused;
     
     CCLabelTTF *_targetMessageLabel;
     NSString *_helpMessage;
+    
+    int _lastMushroomColor;
 }
 #pragma mark - Initialization
 - (void)didLoadFromCCB {
@@ -67,7 +76,7 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     for(int i=0; i<ROW_SIZE; i++)
         _lastRowBallColors[i] = i;
     _lastSpecialBallColor = -1;
-    
+    _lastMushroomColor = -1;
 //    _levelScores = @[@-1, @10, @20, @30, @50, @100];
     _levelScores[0] = -1;
     _levelScores[1] = 5;
@@ -76,8 +85,6 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     _levelScores[4] = 50;
     _levelScores[5] = 100;
     _paused = false;
-    
-    
     
 //    if(Globals.currentLevel == 1){
 //        [_targetMessageLabel setValue:<#(id)#> forKey:label ;
@@ -96,7 +103,7 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     else
         [self initialize]; // For infinite level, initialize immediately
     
-    _helpMessage = @"Move the Jelly by touchnig left or right!";
+    _helpMessage = @"Move the Jelly by touching left or right!";
     
     Globals.levelCleared = false;
 }
@@ -143,7 +150,7 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
 }
 
 - (void)addNewBall:(NSString *)spriteColor xPosition:(CGFloat)xPos{
-    //NSLog(@"Ball Color :%@",spriteColor);
+    
     if(spriteColor == NULL)
         return;
     
@@ -165,34 +172,67 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     
     [_balls addObject:sprite];
 }
-
--(void)addNewRow{
-    int random = -1;
-    int * nextRowColors = [self getNextRowColors];
-    //Special ball logic....
-    if(_points != 0 && _points % 15 == 0){
-        random = (int)(((double)arc4random() / ARC4RANDOM_MAX) * 3); //value between 0 and 3 as there are 3 places where ball can be placed
-        
-        _lastSpecialBallColor = (_lastSpecialBallColor + 1) % MAX_SPECIAL_BALLS;
-        
-    }
-    for (int i=0; i<3; i++) {
-        _lastRowBallColors[i] = nextRowColors[i];
-    }
-    //NSLog(@"Random = %d, Special Ball = %d",random,_lastSpecialBallColor);
-    if(random != 0.0)
-        [self addNewBall:ballColors[nextRowColors[0]] xPosition:0.12f];
-    else
-        [self addNewBall:specialBallColors[_lastSpecialBallColor] xPosition:0.12f];
-    if(random != 1.0)
-        [self addNewBall:ballColors[nextRowColors[1]] xPosition:0.5f];
-    else
-        [self addNewBall:specialBallColors[_lastSpecialBallColor] xPosition:0.5f];
-    if(random != 2.0)
-        [self addNewBall:ballColors[nextRowColors[2]] xPosition:0.88f];
-    else
-        [self addNewBall:specialBallColors[_lastSpecialBallColor] xPosition:0.88f];
+- (void)addNewMushroom:(NSString *)spriteColor xPosition:(CGFloat)xPos{
     
+    if(spriteColor == NULL)
+        return;
+    
+    NSString* spriteName = [NSString stringWithFormat:@"%@%@%@", @"Resources/Mushrooms/", spriteColor, @".png"];
+    
+    CCSprite *sprite = [CCSprite spriteWithImageNamed:spriteName];
+    sprite.positionType = CCPositionTypeMake(CCPositionTypeNormalized.xUnit,
+                                             CCPositionTypePoints.yUnit, CCPositionReferenceCornerTopLeft);
+    [sprite setUserObject:spriteColor];
+    //    [sprite setName:@"Ball"];
+    sprite.position = ccp(xPos, 86);
+    sprite.zOrder = 100;
+    CGPoint center = CGPointMake(sprite.position.x + sprite.contentSize.width/2,
+                                 sprite.position.y - sprite.contentSize.height + 7);
+    sprite.physicsBody = [CCPhysicsBody bodyWithCircleOfRadius:32.0
+                                                     andCenter:center];
+    sprite.physicsBody.collisionType = @"mushroom";
+    [_physicsNode addChild:sprite];
+    
+    [_balls addObject:sprite];
+}
+-(void)addNewRow{
+    int randomPosition = -1;
+    int * nextRowColors = [self getNextRowColors];
+    //Last Row Ball Colors array is not aware of any special balls
+    for(int i = 0; i < MAX_BALLS_IN_ROW; i++)
+        _lastRowBallColors[i] = nextRowColors[i];
+    bool specialBall = false;
+    bool mushroomBall = false;
+    
+    //Special ball logic...
+    //At every X points introduce a special ball
+    if((_points != 0) && ((_points % SPECIALBALL_FREQUENCY) == 0)){
+        specialBall = true;
+    }else if((_points > START_MUSHROOM_LEVEL) && ((_points % MUSHROOM_FREQUENCY) == 0)){
+        //Have mushrooms one in every X rows
+        mushroomBall = true;
+    }
+    if(specialBall || mushroomBall){
+        //Generate a random number which determines which ball position will have special ball
+        randomPosition = (int)(((double)arc4random() / ARC4RANDOM_MAX) * MAX_BALLS_IN_ROW);
+    }
+    
+    //If random is -1 then there is no special ball to be added
+    for(int i = 0; i < MAX_BALLS_IN_ROW; i++){
+        if(randomPosition == i){
+            if(specialBall){
+                //Determine which special ball to use
+                _lastSpecialBallColor = (_lastSpecialBallColor + 1) % MAX_SPECIAL_BALLS;
+                [self addNewBall:specialBallColors[_lastSpecialBallColor] xPosition:_ballPositionsX[i]];
+            }else{
+                _lastMushroomColor = (_lastMushroomColor + 1) % MAX_MUSHROOMS_AVAILABLE;
+                [self addNewMushroom:ballColors[_lastMushroomColor] xPosition:_ballPositionsX[i]];
+            }
+        }
+        else{
+            [self addNewBall:ballColors[nextRowColors[i]] xPosition:_ballPositionsX[i]];
+        }
+    }
     
     free(nextRowColors);
 }
@@ -218,6 +258,7 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
             }
         }
         _lastRowType = MEDIUM;
+        
     }else if(_lastRowType == MEDIUM){
         //Get random row
         for(int i = 0; i < ROW_SIZE; i++){
@@ -225,6 +266,7 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
             nextRowColors[i] = (int)random % TOTAL_COLORS;
         }
         _lastRowType = RANDOM;
+        
     }else if(_lastRowType == RANDOM){
         //Get Tough Row i.e.
         //One of the balls color should repeat as previous row at position where character is standing
@@ -245,6 +287,7 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
         }
         
         _lastRowType = TOUGH;
+        
     }else{
         //Get Easy Row i.e.
         //All the ball colors are different and none of them is same as last row
@@ -388,17 +431,14 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     _rowsAddedSinceLastCollision = 0;
     _skipRowsLabel.visible = false;
     
-    
     NSString* ballColor = (NSString *)ball.userObject;
     NSString* characterColor = (NSString *)character.userObject;
     
     if([ballColor isEqualToString:characterColor]){
         
-        
         _lives--;
-        /* Bounce Scene Animation */
-        [self bounceScene];
         
+        [self bounceCharacter];
         
         if(_lives == 0)
             [self gameOver];
@@ -412,8 +452,8 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
         switch (_lastSpecialBallColor) {
             case 0://Blast
                 //Remove all same color balls
-                for(CCSprite* ball in _balls){
-                    NSString * ballColor = (NSString *)ball.userObject;
+                for(CCSprite *ball in _balls){
+                    NSString *ballColor = (NSString *)ball.userObject;
                     if([ballColor isEqualToString:characterColor])
                         [ball removeFromParent];
                 }
@@ -429,7 +469,7 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
             case 2://Life
                 _lives++;
                 break;
-            case 3://Double 2x
+            case 3://Double Points rate - 2x
                 _pointsMultiplier = _pointsMultiplier * 2;
                 break;
             default:
@@ -443,8 +483,6 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
         _helpMessage = [NSString stringWithFormat:@"%@%@", @"Yes! Got one point :)\nNotice the color of Jelly.\nIt changed to ", ballColor];
         
         //Check the level and stop the game if required
-        //NSLog(@"Level = %d", Globals.currentLevel);
-        //NSLog(@"Points Required %ld", (long)_levelScores[Globals.currentLevel]);
         if(Globals.currentLevel != 6 && _points >= (long)_levelScores[Globals.currentLevel] ) {
             Globals.levelCleared = true;
             [self gameOver];
@@ -454,16 +492,11 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
             _levelSpeed = 0.7f;
         else if(_points >= 100)
             _levelSpeed = 0.6f;
-        //[character removeFromParent];
-        //[self addNewCharacter:ballColor xPosition:character.position.x];
-        [ball removeFromParent];
-    
-        CCActionFadeOut *fadeOutAction = [CCActionFadeOut actionWithDuration:0.25];
-        CCActionRemove *removeAction = [CCActionRemove action];
-        CCActionSequence *sequenceAction = [CCActionSequence actionWithArray:@[fadeOutAction, removeAction]];
         
-        [character runAction:sequenceAction];
-        [self addNewCharacter:ballColor xPosition:character.position.x];
+        [ball removeFromParent];
+        //Character animation...
+        
+        [self fadeInNewCharacter:ballColor];
     }
     
     [self showScore];
@@ -477,6 +510,53 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
             return i;
     }
     return res;
+}
+-(BOOL)ccPhysicsCollisionBegin:(CCPhysicsCollisionPair *)pair
+                     character:(CCNode *)character
+                          mushroom:(CCNode *)mushroom {
+    _rowsAddedSinceLastCollision = 0;
+    _skipRowsLabel.visible = false;
+    
+    NSString* mushroomColor = (NSString *)mushroom.userObject;
+    NSString* characterColor = (NSString *)character.userObject;
+    
+    if([mushroomColor isEqualToString:characterColor]){
+        _points += _pointsMultiplier;
+        
+        //_helpMessage = [NSString stringWithFormat:@"%@%@", @"Yes! Got one point :)\nNotice the color of Jelly.\nIt changed to ", ballColor];
+        
+//        //Check the level and stop the game if required
+//        if(Globals.currentLevel != 6 && _points >= (long)_levelScores[Globals.currentLevel] ) {
+//            Globals.levelCleared = true;
+//            [self gameOver];
+//        }
+//        //TODO: Refactor and fine grain it more
+//        if(_points >= 60)
+//            _levelSpeed = 0.7f;
+//        else if(_points >= 100)
+//            _levelSpeed = 0.6f;
+//        
+        [mushroom removeFromParent];
+        //Character animation...
+        
+        [self fadeInNewCharacter:mushroomColor];
+        
+        
+    }else{
+        _lives--;
+        
+        [self bounceCharacter];
+        
+        if(_lives == 0)
+            [self gameOver];
+        [mushroom removeFromParent];
+        
+        //_helpMessage = @"Oh no! Jelly just lost one life :(\nDo not collide with ball\n of same color as Jelly";
+    }
+    
+    [self showScore];
+    
+    return TRUE;
 }
 #pragma mark - Other Game logic
 - (void)showScore{
@@ -548,7 +628,7 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
             break;
     }
 }
--(void) bounceScene{
+-(void) bounceCharacter{
     CCActionMoveBy *moveBy = [CCActionMoveBy actionWithDuration:0.2f position:ccp(-5, 5)];
     CCActionInterval *reverseMovement = [moveBy reverse];
     CCActionSequence *shakeSequence = [CCActionSequence actionWithArray:@[moveBy, reverseMovement]];
@@ -557,5 +637,13 @@ static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",
     
     CCActionRotateBy *rotateBy = [CCActionRotateBy actionWithDuration:0.2f angle:360];
     [_character runAction:rotateBy];
+}
+-(void) fadeInNewCharacter:(NSString *)color{
+    CCActionFadeOut *fadeOutAction = [CCActionFadeOut actionWithDuration:0.15];
+    CCActionRemove *removeAction = [CCActionRemove action];
+    CCActionSequence *sequenceAction = [CCActionSequence actionWithArray:@[fadeOutAction, removeAction]];
+    [_character runAction:sequenceAction];
+    
+    [self addNewCharacter:color xPosition:_character.position.x];
 }
 @end

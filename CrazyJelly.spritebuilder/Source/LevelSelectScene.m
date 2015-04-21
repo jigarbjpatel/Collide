@@ -77,7 +77,7 @@
                     CCButton *button = _levelButtons[highestLevelCleared];
                     button.enabled = true;
                 }
-                if(highestLevelCleared == 6){ //Last Level
+                if(Globals.currentLevel == 6){ //Last Level
                     _successMessageLabel.visible = false;
                     _failureMessageLabel.visible = false;
                 }else{
