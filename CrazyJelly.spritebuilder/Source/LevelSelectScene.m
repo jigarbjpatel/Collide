@@ -8,6 +8,7 @@
 
 #import "LevelSelectScene.h"
 #import "GlobalData.h"
+#define LAST_LEVEL 6
 
 @implementation LevelSelectScene{
     GlobalData *Globals;
@@ -51,12 +52,16 @@
         _successMessageLabel.visible = false;
         _failureMessageLabel.visible = false;
         
-        Globals.currentLevel = highestLevelCleared;
-        if(highestLevelCleared == 6){ //Last Level
+        Globals.currentLevel = (int)highestLevelCleared;
+
+        for(int i=0; (i <= Globals.currentLevel) && (i < LAST_LEVEL); i++){
+            CCButton *button = (CCButton *)_levelButtons[i];
+            button.enabled = true;
+        }
+        
+        if(Globals.currentLevel != 0){
             _nextButton.enabled = true;
             _playAgainButton.enabled = true;
-            for(CCButton *button in _levelButtons)
-                button.enabled = true;
         }
     }else{
         if(Globals.levelCleared){
@@ -73,11 +78,11 @@
                     button.enabled = true;
                 }
                 //Enable new level
-                if(highestLevelCleared < 6){
+                if(highestLevelCleared < LAST_LEVEL){
                     CCButton *button = _levelButtons[highestLevelCleared];
                     button.enabled = true;
                 }
-                if(Globals.currentLevel == 6){ //Last Level
+                if(Globals.currentLevel == LAST_LEVEL){ //Last Level
                     _successMessageLabel.visible = false;
                     _failureMessageLabel.visible = false;
                 }else{
@@ -107,10 +112,10 @@
 }
 
 - (void)nextLevel{
-    if(Globals.currentLevel < 6){
+    if(Globals.currentLevel < LAST_LEVEL){
         Globals.currentLevel++;
     }else{
-        Globals.currentLevel = 6; // Last Level
+        Globals.currentLevel = LAST_LEVEL;
     }
     [self restart];
 }

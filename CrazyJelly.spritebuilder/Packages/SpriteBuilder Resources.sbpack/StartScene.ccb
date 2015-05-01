@@ -268,6 +268,14 @@
 					</dict>
 					<dict>
 						<key>name</key>
+						<string>zoomWhenHighlighted</string>
+						<key>type</key>
+						<string>Check</string>
+						<key>value</key>
+						<true/>
+					</dict>
+					<dict>
+						<key>name</key>
 						<string>backgroundSpriteFrame|Normal</string>
 						<key>type</key>
 						<string>SpriteFrame</string>
@@ -276,6 +284,14 @@
 							<string></string>
 							<string>ccbResources/ccbButtonNormal.png</string>
 						</array>
+					</dict>
+					<dict>
+						<key>name</key>
+						<string>backgroundOpacity|Normal</string>
+						<key>type</key>
+						<string>Float</string>
+						<key>value</key>
+						<real>0.0</real>
 					</dict>
 					<dict>
 						<key>name</key>
@@ -345,7 +361,7 @@
 						<key>type</key>
 						<string>FontTTF</string>
 						<key>value</key>
-						<string>Helvetica</string>
+						<string>Chalkduster</string>
 					</dict>
 					<dict>
 						<key>name</key>
@@ -354,7 +370,7 @@
 						<string>FloatScale</string>
 						<key>value</key>
 						<array>
-							<real>17</real>
+							<real>20</real>
 							<integer>0</integer>
 						</array>
 					</dict>
@@ -403,10 +419,10 @@
 						<string>Color4</string>
 						<key>value</key>
 						<array>
-							<real>255</real>
-							<real>255</real>
-							<real>255</real>
-							<real>255</real>
+							<real>0.44996169209480286</real>
+							<real>1</real>
+							<real>0.0063248388469219208</real>
+							<real>1</real>
 						</array>
 					</dict>
 					<dict>
@@ -472,6 +488,8 @@
 						</array>
 					</dict>
 				</array>
+				<key>selected</key>
+				<true/>
 			</dict>
 			<dict>
 				<key>UUID</key>
@@ -506,7 +524,7 @@
 						<key>value</key>
 						<array>
 							<real>0.5</real>
-							<real>0.69718307256698608</real>
+							<real>0.75</real>
 							<integer>0</integer>
 							<integer>2</integer>
 							<integer>2</integer>
@@ -614,7 +632,7 @@
 						<key>value</key>
 						<array>
 							<real>0.85000002384185791</real>
-							<real>0.577464759349823</real>
+							<real>0.60000002384185791</real>
 							<integer>0</integer>
 							<integer>2</integer>
 							<integer>2</integer>
@@ -721,8 +739,8 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>0.8095703125</real>
-							<real>0.35035210847854614</real>
+							<real>0.75</real>
+							<real>0.40000000596046448</real>
 							<integer>0</integer>
 							<integer>2</integer>
 							<integer>2</integer>
@@ -829,11 +847,11 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>160</real>
-							<real>150</real>
+							<real>0.5</real>
+							<real>0.25</real>
 							<integer>0</integer>
-							<integer>0</integer>
-							<integer>0</integer>
+							<integer>2</integer>
+							<integer>2</integer>
 						</array>
 					</dict>
 					<dict>
@@ -937,11 +955,11 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>70</real>
-							<real>199</real>
+							<real>0.25</real>
+							<real>0.40000000596046448</real>
 							<integer>0</integer>
-							<integer>0</integer>
-							<integer>0</integer>
+							<integer>2</integer>
+							<integer>2</integer>
 						</array>
 					</dict>
 					<dict>
@@ -1045,11 +1063,11 @@
 						<string>Position</string>
 						<key>value</key>
 						<array>
-							<real>82</real>
-							<real>326</real>
+							<real>0.25</real>
+							<real>0.60000002384185791</real>
 							<integer>0</integer>
-							<integer>0</integer>
-							<integer>0</integer>
+							<integer>2</integer>
+							<integer>2</integer>
 						</array>
 					</dict>
 					<dict>
@@ -1201,7 +1219,7 @@
 						<key>type</key>
 						<string>FontTTF</string>
 						<key>value</key>
-						<string>Helvetica</string>
+						<string>Chalkduster</string>
 					</dict>
 					<dict>
 						<key>name</key>
@@ -1221,6 +1239,19 @@
 						<string>Check</string>
 						<key>value</key>
 						<false/>
+					</dict>
+					<dict>
+						<key>name</key>
+						<string>color</string>
+						<key>type</key>
+						<string>Color3</string>
+						<key>value</key>
+						<array>
+							<real>0.94465899467468262</real>
+							<real>1</real>
+							<real>0.93089354038238525</real>
+							<real>1</real>
+						</array>
 					</dict>
 					<dict>
 						<key>name</key>
