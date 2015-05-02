@@ -2,6 +2,7 @@
 #import "Character.h"
 #import "Ball.h"
 #import "GlobalData.h"
+
 #define ARC4RANDOM_MAX      0x100000000
 #define ROW_SIZE    3
 #define TOTAL_COLORS 6
@@ -13,11 +14,11 @@
 #define MUSHROOM_FREQUENCY 5
 #define START_MUSHROOM_LEVEL 30
 
-static NSString *ballColors[TOTAL_COLORS] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink",@"White"};
 typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
+
+static NSString *ballColors[TOTAL_COLORS] = {@"Red", @"Blue",@"Yellow",@"Green",@"Pink",@"White"};
 static NSString *specialBallColors[MAX_SPECIAL_BALLS] = {@"Blast", @"Lightning",@"Life",@"Double"};
 static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
-//static int MAX_ROWS_THAT_CAN_BE_SKIPPED = 5;
 
 @implementation MainScene{
     
@@ -41,15 +42,19 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     int _lastSpecialBallColor;
     int _pointsMultiplier;
     
-// NSArray *_levelScores;
     int _levelScores[6];
     CCSprite *_playImage, *_pauseImage;
-    BOOL _paused;
+
     
     CCLabelTTF *_targetMessageLabel;
     NSString *_helpMessage;
     
     int _lastMushroomColor;
+    CCNode *_onboardingNode;
+    CCLabelTTF *_helpMessageLabel;
+    BOOL _ballWrongCollisionMsgShown,_ballRightCollisionMsgShown,
+    _collideMsgShown, _moveJellyMsgShown, _skipRowsMsgShown, _specialBallMsgShown,
+    _mushroomMsgShown;
 }
 #pragma mark - Initialization
 - (void)didLoadFromCCB {
@@ -68,7 +73,6 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     _physicsNode.collisionDelegate = self;
     _physicsNode.debugDraw = false;
     
-    
     _scoreLabel.visible = true;
     _lifeLabel.visible = true;
     _skipRowsLabel.visible = false;
@@ -84,7 +88,7 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     _levelScores[3] = 30;
     _levelScores[4] = 50;
     _levelScores[5] = 100;
-    _paused = false;
+
     
     if(Globals.currentLevel == 1)
         _pauseImage.visible = false;
@@ -98,11 +102,18 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     else
         [self initialize]; // For infinite level, initialize immediately
     
-    _helpMessage = @"Move the Jelly by touching left or right!";
-    
     Globals.levelCleared = false;
+    
+    _ballWrongCollisionMsgShown = false;
+    _ballRightCollisionMsgShown = false;
+    _collideMsgShown = false;
+    _moveJellyMsgShown = false;
+    _skipRowsMsgShown = false;
+    _specialBallMsgShown = false;
+    _mushroomMsgShown = false;
 }
 -(void)initialize{
+    
     _targetMessageLabel.visible = false;
     //Initialize the character
     CGFloat random = ((double)arc4random() / ARC4RANDOM_MAX); //value between 0 and 1
@@ -110,14 +121,30 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     [self addNewCharacter:ballColors[index] xPosition:0.5f];
     
     //Initialize the Balls
-    for (int i=0; i < 2; i++) {
+    for (int i=0; i < 3; i++) {
         [self addNewRow];
         //Push the row down
         for(CCSprite* sprite in _balls){
-            sprite.position = ccp(sprite.position.x, sprite.position.y + 120);
+            sprite.position = ccp(sprite.position.x, sprite.position.y + 100);
         }
     }
     [self addNewRow];
+    
+    
+    _onboardingNode.visible = false;
+    CCNode *onboarding1Scene = [CCBReader loadAsScene:@"Onboarding1" owner:self];
+    [_onboardingNode addChild: onboarding1Scene];
+    
+    if(Globals.currentLevel == 1 && !_moveJellyMsgShown){
+        
+        _helpMessage = @"Move the Jelly left and right \nby tapping anywhere on screen.";
+        
+        [_helpMessageLabel setString:_helpMessage];
+        _onboardingNode.visible = true;
+        
+        [[CCDirector sharedDirector] pause];
+        _moveJellyMsgShown = true;
+    }
 }
 -(void)addNewCharacter:(NSString *)spriteColor xPosition:(CGFloat)xPos{
     if(spriteColor == NULL)
@@ -127,7 +154,7 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     sprite.positionType = CCPositionTypeMake(CCPositionTypeNormalized.xUnit,
                                              CCPositionTypePoints.yUnit, CCPositionReferenceCornerBottomLeft);
     [sprite setUserObject:spriteColor];
-    //    [sprite setName:@"Character"];
+
     sprite.position = ccp(xPos, 50);
     sprite.zOrder = 100;
     
@@ -135,7 +162,8 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
                              sprite.contentSize.width, sprite.contentSize.height);
     
     sprite.physicsBody = [CCPhysicsBody bodyWithRect:rect cornerRadius:0 ];
-    sprite.physicsBody.type = CCPhysicsBodyTypeStatic;
+//    sprite.physicsBody.type = CCPhysicsBodyTypeStatic;
+    sprite.physicsBody.type = CCPhysicsBodyTypeKinematic;
     sprite.physicsBody.collisionType = @"character";
     [_physicsNode addChild:sprite];
     
@@ -155,7 +183,7 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     sprite.positionType = CCPositionTypeMake(CCPositionTypeNormalized.xUnit,
                                              CCPositionTypePoints.yUnit, CCPositionReferenceCornerTopLeft);
     [sprite setUserObject:spriteColor];
-    //    [sprite setName:@"Ball"];
+  
     sprite.position = ccp(xPos, 86);
     sprite.zOrder = 100;
     CGPoint center = CGPointMake(sprite.position.x + sprite.contentSize.width/2,
@@ -178,7 +206,7 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     sprite.positionType = CCPositionTypeMake(CCPositionTypeNormalized.xUnit,
                                              CCPositionTypePoints.yUnit, CCPositionReferenceCornerTopLeft);
     [sprite setUserObject:spriteColor];
-    //    [sprite setName:@"Ball"];
+ 
     sprite.position = ccp(xPos, 86);
     sprite.zOrder = 100;
     CGPoint center = CGPointMake(sprite.position.x + sprite.contentSize.width/2,
@@ -219,9 +247,32 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
                 //Determine which special ball to use
                 _lastSpecialBallColor = (_lastSpecialBallColor + 1) % MAX_SPECIAL_BALLS;
                 [self addNewBall:specialBallColors[_lastSpecialBallColor] xPosition:_ballPositionsX[i]];
+                
+                if(Globals.currentLevel == 2 && !_specialBallMsgShown){
+                    _helpMessage = @"Collect as many special balls \nand power ups coming on your way!!!";
+                    
+                    [[CCDirector sharedDirector] pause];
+                    [_helpMessageLabel setString:_helpMessage];
+                    _onboardingNode.visible = true;
+                    
+                    _specialBallMsgShown = true;
+                }
+                
             }else{
+                
+                if(Globals.currentLevel > 3 && Globals.currentLevel < 6 && !_mushroomMsgShown){
+                    _helpMessage = @"Mushrooms behave exactly opposite to balls\n Hit same color mushrooms to get 2X points\nBut different colored mushroom will take life!!!";
+                    
+                    [[CCDirector sharedDirector] pause];
+                    [_helpMessageLabel setString:_helpMessage];
+                    _onboardingNode.visible = true;
+                    
+                    _mushroomMsgShown = true;
+                }
+                
                 _lastMushroomColor = (_lastMushroomColor + 1) % MAX_MUSHROOMS_AVAILABLE;
                 [self addNewMushroom:ballColors[_lastMushroomColor] xPosition:_ballPositionsX[i]];
+                
             }
         }else{
             [self addNewBall:ballColors[nextRowColors[i]] xPosition:_ballPositionsX[i]];
@@ -233,8 +284,10 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
 //Returns array of indexes (pointing to ballColors array)
 //NOTE: Caller must free the memory
 -(int *)getNextRowColors{
+    
     int * nextRowColors = malloc(sizeof(int) * ROW_SIZE);
     CGFloat random = ((double)arc4random() / ARC4RANDOM_MAX) * 10.0; //value between 0 and 10
+    
     if(_lastRowType == EASY){
         //Get Medium Row i.e.
         //One of the balls color should repeat as previous row
@@ -305,7 +358,6 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
         }
         _lastRowType = EASY;
     }
-    //NSLog(@"Next Row Colors %d, %d, %d", nextRowColors[0], nextRowColors[1], nextRowColors[2]);
     
     return nextRowColors;
 }
@@ -318,15 +370,6 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
         
         if(_timeSinceLastRowAdded > _levelSpeed){
            
-            if(Globals.currentLevel == 1){
-                _targetMessageLabel.visible = false;
-                
-                [self showMessage:_helpMessage  atPosition:CGPointMake(_screenSize.width/2, _screenSize.height/2)];
-                [[CCDirector sharedDirector] performSelector:@selector(resume) withObject:nil afterDelay:1.5];
-                [[CCDirector sharedDirector] pause];
-                
-//                _helpMessage = [NSString stringWithFormat:@"%@%@",@"Collide with a ball of any color\n other than ", (NSString *)_character.userObject];
-            }
             
             for(CCSprite* sprite in _balls){
                 sprite.position = ccp(sprite.position.x, sprite.position.y + 10);
@@ -346,40 +389,74 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
             }
             
             for (CCNode *ballToRemove in offScreenBalls) {
+                
                 [ballToRemove removeFromParent];
                 [_balls removeObject:ballToRemove];
+                
             }
             
             if(offScreenBalls.count > 0){
+
+                if(Globals.currentLevel == 1 && !_collideMsgShown){
+                    
+                    _helpMessage = @"Collide with a ball of any color\n other than Jelly's color!!!";
+                    
+                    [[CCDirector sharedDirector] pause];
+                    
+                    [_helpMessageLabel setString:_helpMessage];
+                    
+                    _onboardingNode.visible = true;
+                    
+                    _collideMsgShown = true;
+                }
                 
                 [self addNewRow];
                 
                 _rowsAddedSinceLastCollision++;
+                
                 if(_rowsAddedSinceLastCollision > 1){
                     //Start the timer and check if user loses life
                     
-                    _skipRowsLabel.visible = true;
                     _skipRowsLabel.string = [NSString stringWithFormat:@"%d", MAX_ROWS_THAT_CAN_BE_SKIPPED - _rowsAddedSinceLastCollision];
+                    _skipRowsLabel.visible = true;
+                    //Scale the character down to let user know that it will die soon
+                    double scaleBy = (1.0 - (double)((double)_rowsAddedSinceLastCollision / (double)MAX_ROWS_THAT_CAN_BE_SKIPPED)) + 0.10;
+                    id scaleDownAction = [CCActionEaseInOut
+                                          actionWithAction:[CCActionScaleTo actionWithDuration:0.1 scaleX:scaleBy scaleY:scaleBy]
+                                          rate:2.0];
+                    id blinkAction = [CCActionBlink actionWithDuration:0.1 blinks:1];
+                    
+                    [_character runAction:scaleDownAction];
+                    [_skipRowsLabel runAction:blinkAction];
+                    
                     
                     if(_rowsAddedSinceLastCollision >= MAX_ROWS_THAT_CAN_BE_SKIPPED){
-                        
+                        //Character did not collide for long...it dies
                         _rowsAddedSinceLastCollision = 0;
                         _lives--;
                         
                         _lifeLabel.string = [NSString stringWithFormat:@"%d", _lives];
                         _skipRowsLabel.visible = false;
                         
-                        _helpMessage = @"Oh no! Jelly just lost one life :(\nJelly can't live long without colliding.\nKeep monitoring the timer at top right.";
                         
                         [self bounceCharacter];
 
+                        if(_lives > 0 && Globals.currentLevel == 1 && !_skipRowsMsgShown){
+                            
+                            _helpMessage = @"Oh no! Jelly just lost one life :(\nJelly can't live long without colliding.\nKeep monitoring the timer at top right.";
+                            [[CCDirector sharedDirector] pause];
+                            
+                            [_helpMessageLabel setString:_helpMessage];
+                            _onboardingNode.visible = true;
+                            
+                            _skipRowsMsgShown = true;
+                        }
+                        
                         if(_lives == 0)
                             [self gameOver];
 
                     }
                 }
-                // NSLog(@"_rowsAddedSinceLastCollision = %d",_rowsAddedSinceLastCollision);
-                
             }
         }
     }
@@ -389,26 +466,21 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
          withEvent:(CCTouchEvent *)event {
     // get the x location of touch and move the character there.
     if(!_gameOver){
+        
+        _skipRowsLabel.visible = false;
+        
         CGPoint touchLocation = [touch locationInNode:self];
         //_character.position = ccp(touchLocation.x/_screenSize.width,_character.position.y);
+        
         //Check if Pause/Play image has been cicked
         CGRect playPauseRect =  [_pauseImage boundingBox];
         
         if (CGRectContainsPoint(playPauseRect,touchLocation)){
-            if(!_paused){
-                _paused = true;
-                [[CCDirector sharedDirector] pause];
-                _pauseImage.visible = false;
-                _playImage.visible = true;
-            }else{
-                _paused = false;
-                [[CCDirector sharedDirector] resume];
-                _pauseImage.visible = true;
-                _playImage.visible = false;
-
-            }
-        }else if (!_paused){
-            _helpMessage = [NSString stringWithFormat:@"%@%@",@"Collide with a ball of any color\n other than ", (NSString *)_character.userObject];
+            
+            CCScene *pausedScene = [CCBReader loadAsScene:@"PausedScene"];
+            [[CCDirector sharedDirector] pushScene:pausedScene];
+        
+        }else if (!self.paused){
             
             if(touchLocation.x < (_screenSize.width * .12f + 35))
                 _character.position = ccp(.12f, _character.position.y);
@@ -427,6 +499,7 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
 -(BOOL)ccPhysicsCollisionBegin:(CCPhysicsCollisionPair *)pair
                      character:(CCNode *)character
                           ball:(CCNode *)ball {
+    
     _rowsAddedSinceLastCollision = 0;
     _skipRowsLabel.visible = false;
     
@@ -441,69 +514,102 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
         
         [ball removeFromParent];
         
-        _helpMessage = @"Oh no! Jelly just lost one life :(\nDo not collide with ball\n of same color as Jelly";
-        
         if(_lives == 0)
             [self gameOver];
 
+        
+        if(Globals.currentLevel == 1 && _lives > 0){
+            if(!_ballWrongCollisionMsgShown){
+                _helpMessage = @"Oh no! Jelly just lost one life :(\nDo not collide with ball\n of same color as Jelly";
+                [[CCDirector sharedDirector] pause];
+            
+                [_helpMessageLabel setString:_helpMessage];
+                _onboardingNode.visible = true;
+                
+                _ballWrongCollisionMsgShown = true;
+            }
+        }
+
+        
     }else if([self getSpecialBallIndex:ballColor] != -1){
         //Special Ball Handling
-       // NSLog(@"Special Ball %d", _lastSpecialBallColor);
         switch (_lastSpecialBallColor) {
             case 0://Blast
-                //Remove all same color balls
+                //Remove all balls of same color as Jelly
                 for(CCSprite *ball in _balls){
+                    
                     NSString *ballColor = (NSString *)ball.userObject;
-                    if([ballColor isEqualToString:characterColor])
+                    
+                    if([ballColor isEqualToString:characterColor]){
+                        
                         [self ballRemoved:ball];
-                        //[ball removeFromParent];
+                        
+                        _points += _pointsMultiplier;
+                    }
                 }
                 
                 break;
             case 1://Lightning
-                //Remove all balls
+                //Remove all balls from screen
                 for(CCSprite* ball in _balls){
+                    
                     [self ballRemoved:ball];
-                    //[ball removeFromParent];
+                    
+                    _points += _pointsMultiplier;
                 }
                
                 break;
+                
             case 2://Life
                 _lives++;
                 break;
+                
             case 3://Double Points rate - 2x
                 _pointsMultiplier = _pointsMultiplier * 2;
                 break;
+                
             default:
                 break;
         }
-        //[ball removeFromParent];
+
         [self ballRemoved:ball];
         
     }else{
+        
         _points += _pointsMultiplier;
         
-        _helpMessage = [NSString stringWithFormat:@"%@%@", @"Yes! Got one point :)\nNotice the color of Jelly.\nIt changed to ", ballColor];
+        if(Globals.currentLevel == 1){
+            if(!_ballRightCollisionMsgShown){
+                _helpMessage = [NSString stringWithFormat:@"%@%@", @"Yes! Got one point :)\nNotice the color of Jelly.\nIt changed to ",
+                                ballColor];
+
+                [[CCDirector sharedDirector] pause];
+                [_helpMessageLabel setString:_helpMessage];
+                _onboardingNode.visible = true;
+                
+                _ballRightCollisionMsgShown = true;
+            }
+        }
+        
         
         //Check the level and stop the game if required
         if(Globals.currentLevel != 6 && _points >= (long)_levelScores[Globals.currentLevel] ) {
             Globals.levelCleared = true;
             [self gameOver];
         }
-        //TODO: Refactor and fine grain it more
+        
+        //Adjust speed depending on points scored
         if(_points >= 60)
             _levelSpeed = 0.7f;
         else if(_points >= 100)
             _levelSpeed = 0.6f;
         
         [self ballRemoved:ball];
-        //[ball removeFromParent];
-        //Character animation...
         
         [self fadeInNewCharacter:ballColor];
         
-        
-        [self showMessage:[NSString stringWithFormat:@"%@%d", @"+", _pointsMultiplier ] atPosition:_character.positionInPoints];
+        [self showMessage:[NSString stringWithFormat:@"%@%d", @"+", _pointsMultiplier ]
+               atPosition:_character.positionInPoints];
     }
     
     [self showScore];
@@ -511,6 +617,7 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     return TRUE;
 }
 -(int)getSpecialBallIndex:(NSString*) ballColor{
+    
     int res = -1;
     for(int i=0; i<MAX_SPECIAL_BALLS; i++){
         if([specialBallColors[i] isEqualToString:ballColor])
@@ -521,6 +628,7 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
 -(BOOL)ccPhysicsCollisionBegin:(CCPhysicsCollisionPair *)pair
                      character:(CCNode *)character
                       mushroom:(CCNode *)mushroom {
+
     _rowsAddedSinceLastCollision = 0;
     _skipRowsLabel.visible = false;
     
@@ -529,13 +637,14 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     
     if([mushroomColor isEqualToString:characterColor]){
         
-        _points += _pointsMultiplier;
+        _points += _pointsMultiplier * 2; //Double the points rate for mushrooms
         
-        //_helpMessage = [NSString stringWithFormat:@"%@%@", @"Yes! Got one point :)\nNotice the color of Jelly.\nIt changed to ", ballColor];
-        
-        [mushroom removeFromParent];
-        //Character animation...
+        [self ballRemoved:mushroom];
+
         [self fadeInNewCharacter:mushroomColor];
+        
+        [self showMessage:[NSString stringWithFormat:@"%@%d", @"+", _pointsMultiplier * 2 ]
+               atPosition:_character.positionInPoints];
         
     }else{
         
@@ -543,12 +652,11 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
         
         [self bounceCharacter];
         
+        [self ballRemoved:mushroom];
+        
         if(_lives == 0)
             [self gameOver];
         
-        [mushroom removeFromParent];
-        
-        //_helpMessage = @"Oh no! Jelly just lost one life :(\nDo not collide with ball\n of same color as Jelly";
     }
     
     [self showScore];
@@ -560,10 +668,11 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     _scoreLabel.string = [NSString stringWithFormat:@"%ld", _points];
     _lifeLabel.string = [NSString stringWithFormat:@"%d", _lives];
 }
+
 - (void)gameOver {
+    
     if (!_gameOver) {
         _gameOver = TRUE;
-        //_restartButton.visible = TRUE;
        
         [self bounceCharacter];
         
@@ -574,40 +683,36 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
         if(Globals.currentLevel == 6) //Last Level
             Globals.levelCleared = true;
         
-        
-        
+        if(self.paused)
+            [[CCDirector sharedDirector] resume];
+
         [self showMessage:@"Game Over!!!" atPosition:CGPointMake(_screenSize.width/2, _screenSize.height/2)];
+        
         CCScene *scene = [CCBReader loadAsScene:@"LevelSelectScene"];
         [[CCDirector sharedDirector] performSelector:@selector(replaceScene:) withObject:scene afterDelay:1.5];
         
-        
         for (CCSprite* ball in _balls) {
             [self ballRemoved:ball];
-//            [ball removeFromParent];
         }
         
-        
-        
-//        CCScene *scene = [CCBReader loadAsScene:@"LevelSelectScene"];
-//        [[CCDirector sharedDirector] replaceScene:scene];
     }
 }
 
 - (void)restart {
+    CCTransition *transition = [CCTransition transitionFadeWithDuration:0.2f];
     CCScene *scene = [CCBReader loadAsScene:@"MainScene"];
-    [[CCDirector sharedDirector] replaceScene:scene];
+    [[CCDirector sharedDirector] replaceScene:scene withTransition:transition];
 }
-
+#pragma mark - Animations
 -(void) showMessage:(NSString*)message atPosition:(CGPoint)position {
     CCLabelTTF *lblForMessage = [CCLabelTTF labelWithString:message fontName:@"Helvetica" fontSize:18];
     
     lblForMessage.position = position;
     
-    
     [self addChild:lblForMessage];
     
-    CCActionFadeOut *fadeAction = [CCActionFadeOut actionWithDuration:0.75];
-    CCActionMoveBy *moveUpAction = [CCActionMoveBy actionWithDuration:0.75 position:ccp(0, 10)];
+    CCActionFadeOut *fadeAction = [CCActionFadeOut actionWithDuration:0.5];
+    CCActionMoveBy *moveUpAction = [CCActionMoveBy actionWithDuration:5 position:ccp(0, 10)];
     CCActionRemove *removeAction = [CCActionRemove action];
     
     CCActionSpawn *spawnAction = [CCActionSpawn actionWithArray:@[fadeAction, moveUpAction]];
@@ -640,13 +745,13 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
 }
 -(void) bounceCharacter{
     
-    CCActionMoveBy *moveBy = [CCActionMoveBy actionWithDuration:0.2f position:ccp(-5, 5)];
+    CCActionMoveBy *moveBy = [CCActionMoveBy actionWithDuration:0.15f position:ccp(-5, 5)];
     CCActionInterval *reverseMovement = [moveBy reverse];
     CCActionSequence *shakeSequence = [CCActionSequence actionWithArray:@[moveBy, reverseMovement]];
     CCActionEaseBounce *bounce = [CCActionEaseBounce actionWithAction:shakeSequence];
     [self runAction:bounce];
     
-    CCActionRotateBy *rotateBy = [CCActionRotateBy actionWithDuration:0.2f angle:360];
+    CCActionRotateBy *rotateBy = [CCActionRotateBy actionWithDuration:0.15f angle:360];
     [_character runAction:rotateBy];
 }
 -(void) fadeInNewCharacter:(NSString *)color{
@@ -666,12 +771,16 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     explosion.autoRemoveOnFinish = TRUE;
     // place the particle effect on the balls position
     explosion.positionType = ball.positionType;
-    
     explosion.position = ball.position;
     // add the particle effect to the same node the ball is on
     [ball.parent addChild:explosion];
     
     // finally, remove the destroyed ball
     [ball removeFromParent];
+}
+-(void)hideOnboarding{
+    _onboardingNode.visible = false;
+    [[CCDirector sharedDirector] resume];
+
 }
 @end

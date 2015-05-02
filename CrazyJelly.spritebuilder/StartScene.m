@@ -11,15 +11,13 @@
 
 @implementation StartScene {
 
-//    GlobalData *Globals;
 }
 
 -(void)play{
-//    Globals = [GlobalData sharedInstance];
-//    Globals.currentLevel = 1;
     
+    CCTransition *transition = [CCTransition transitionFadeWithDuration:0.2f];
     CCScene *gameplayScene = [CCBReader loadAsScene:@"HelpScene"];
-    [[CCDirector sharedDirector] replaceScene:gameplayScene];
+    [[CCDirector sharedDirector] replaceScene:gameplayScene withTransition:transition];
 }
 @end
 

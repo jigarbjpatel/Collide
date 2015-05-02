@@ -13,6 +13,7 @@
 		013E99601A9AD80100ED4D88 /* Character.m in Sources */ = {isa = PBXBuildFile; fileRef = 013E995F1A9AD80100ED4D88 /* Character.m */; };
 		0152CB821AC3A062002ED895 /* StartScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 0152CB811AC3A062002ED895 /* StartScene.m */; };
 		01DD163F1A9AD6DC00E618A6 /* Ball.m in Sources */ = {isa = PBXBuildFile; fileRef = 01DD163E1A9AD6DC00E618A6 /* Ball.m */; };
+		01E597F41AF456380099000B /* PausedScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 01E597F31AF456380099000B /* PausedScene.m */; };
 		5B121030197484FA004C1E1D /* CrazyJellyActivity.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B12102F197484FA004C1E1D /* CrazyJellyActivity.m */; };
 		5B121038197487F2004C1E1D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B737893E1807617C0076A88C /* AppDelegate.m */; };
 		7A046D8C19E8A20E004C4763 /* MainScene.m in Sources */ = {isa = PBXBuildFile; fileRef = B7378993180767190076A88C /* MainScene.m */; };
@@ -167,6 +168,8 @@
 		0152CB811AC3A062002ED895 /* StartScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartScene.m; sourceTree = "<group>"; };
 		01DD163E1A9AD6DC00E618A6 /* Ball.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Ball.m; path = Source/Ball.m; sourceTree = "<group>"; };
 		01DD16441A9AD6F200E618A6 /* Ball.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
+		01E597F01AF456220099000B /* PausedScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PausedScene.h; sourceTree = "<group>"; };
+		01E597F31AF456380099000B /* PausedScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PausedScene.m; path = Source/PausedScene.m; sourceTree = "<group>"; };
 		5B12100919748273004C1E1D /* libEGL.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libEGL.so; path = /usr/lib/armv7a/libEGL.so; sourceTree = SDKROOT; };
 		5B12100F197483EE004C1E1D /* ic_launcher.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_launcher.png; sourceTree = "<group>"; };
 		5B121011197483EE004C1E1D /* ic_launcher.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_launcher.png; sourceTree = "<group>"; };
@@ -470,6 +473,8 @@
 				013E995C1A9AD7B700ED4D88 /* Character.h */,
 				013E995F1A9AD80100ED4D88 /* Character.m */,
 				D352B48019EC608A00829775 /* MetalShaders */,
+				01E597F01AF456220099000B /* PausedScene.h */,
+				01E597F31AF456380099000B /* PausedScene.m */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -851,6 +856,7 @@
 				01230D0D1ACB4DCB00E864B4 /* HelpScene.m in Sources */,
 				0152CB821AC3A062002ED895 /* StartScene.m in Sources */,
 				01230D091ACA64BD00E864B4 /* GlobalData.m in Sources */,
+				01E597F41AF456380099000B /* PausedScene.m in Sources */,
 				013E99601A9AD80100ED4D88 /* Character.m in Sources */,
 				B73789871807631A0076A88C /* main.m in Sources */,
 				01230D031ACA1E1C00E864B4 /* LevelSelectScene.m in Sources */,

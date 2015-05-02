@@ -107,8 +107,10 @@
 }
 
 - (void)restart {
+    CCTransition *transition = [CCTransition transitionFadeWithDuration:0.2f];
+
     CCScene *scene = [CCBReader loadAsScene:@"MainScene"];
-    [[CCDirector sharedDirector] replaceScene:scene];
+    [[CCDirector sharedDirector] replaceScene:scene withTransition:transition];
 }
 
 - (void)nextLevel{

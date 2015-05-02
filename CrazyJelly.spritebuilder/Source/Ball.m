@@ -13,10 +13,6 @@
 #define ARC4RANDOM_MAX      0x100000000
 
 
-static const CGFloat minimumXPosition = 15;
-
-static const CGFloat maximumXPosition = 0;
-
 - (void)didLoadFromCCB {
 //    _bottomPipe.physicsBody.collisionType = @"level";
 //    _bottomPipe.physicsBody.sensor = YES;
