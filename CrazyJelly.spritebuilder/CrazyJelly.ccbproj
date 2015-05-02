@@ -140,29 +140,21 @@
 		</dict>
 		<key>Resources/Mushrooms/Mushrooms_01_256x256_Alt_01_002@4x.png</key>
 		<dict>
-			<key>isDirty</key>
-			<true/>
 			<key>scaleFrom</key>
 			<integer>4</integer>
 		</dict>
 		<key>Resources/Mushrooms/Mushrooms_01_256x256_Alt_01_004@4x.png</key>
 		<dict>
-			<key>isDirty</key>
-			<true/>
 			<key>scaleFrom</key>
 			<integer>4</integer>
 		</dict>
 		<key>Resources/Mushrooms/Mushrooms_01_256x256_Alt_01_005@4x.png</key>
 		<dict>
-			<key>isDirty</key>
-			<true/>
 			<key>scaleFrom</key>
 			<integer>4</integer>
 		</dict>
 		<key>Resources/Mushrooms/Mushrooms_01_256x256_Alt_01_006@4x.png</key>
 		<dict>
-			<key>isDirty</key>
-			<true/>
 			<key>scaleFrom</key>
 			<integer>4</integer>
 		</dict>
