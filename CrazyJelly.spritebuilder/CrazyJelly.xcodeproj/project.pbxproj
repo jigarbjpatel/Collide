@@ -156,20 +156,20 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01230CFF1ACA1DEB00E864B4 /* LevelSelectScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LevelSelectScene.h; sourceTree = "<group>"; };
-		01230D021ACA1E1C00E864B4 /* LevelSelectScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LevelSelectScene.m; path = Source/LevelSelectScene.m; sourceTree = "<group>"; };
-		01230D081ACA64BD00E864B4 /* GlobalData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GlobalData.m; path = Source/GlobalData.m; sourceTree = "<group>"; };
-		01230D0A1ACA65A400E864B4 /* GlobalData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GlobalData.h; path = Source/GlobalData.h; sourceTree = "<group>"; };
-		01230D0B1ACB4DBA00E864B4 /* HelpScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HelpScene.h; path = Source/HelpScene.h; sourceTree = "<group>"; };
-		01230D0C1ACB4DCB00E864B4 /* HelpScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpScene.m; sourceTree = "<group>"; };
-		013E995C1A9AD7B700ED4D88 /* Character.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Character.h; sourceTree = "<group>"; };
-		013E995F1A9AD80100ED4D88 /* Character.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Character.m; path = Source/Character.m; sourceTree = "<group>"; };
-		0152CB7E1AC3A02C002ED895 /* StartScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StartScene.h; sourceTree = "<group>"; };
-		0152CB811AC3A062002ED895 /* StartScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartScene.m; sourceTree = "<group>"; };
-		01DD163E1A9AD6DC00E618A6 /* Ball.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Ball.m; path = Source/Ball.m; sourceTree = "<group>"; };
-		01DD16441A9AD6F200E618A6 /* Ball.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = "<group>"; };
-		01E597F01AF456220099000B /* PausedScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PausedScene.h; sourceTree = "<group>"; };
-		01E597F31AF456380099000B /* PausedScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PausedScene.m; path = Source/PausedScene.m; sourceTree = "<group>"; };
+		01230CFF1ACA1DEB00E864B4 /* LevelSelectScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LevelSelectScene.h; sourceTree = SOURCE_ROOT; };
+		01230D021ACA1E1C00E864B4 /* LevelSelectScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LevelSelectScene.m; path = Source/LevelSelectScene.m; sourceTree = SOURCE_ROOT; };
+		01230D081ACA64BD00E864B4 /* GlobalData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GlobalData.m; path = Source/GlobalData.m; sourceTree = SOURCE_ROOT; };
+		01230D0A1ACA65A400E864B4 /* GlobalData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = GlobalData.h; path = Source/GlobalData.h; sourceTree = SOURCE_ROOT; };
+		01230D0B1ACB4DBA00E864B4 /* HelpScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HelpScene.h; path = Source/HelpScene.h; sourceTree = SOURCE_ROOT; };
+		01230D0C1ACB4DCB00E864B4 /* HelpScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpScene.m; sourceTree = SOURCE_ROOT; };
+		013E995C1A9AD7B700ED4D88 /* Character.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Character.h; sourceTree = SOURCE_ROOT; };
+		013E995F1A9AD80100ED4D88 /* Character.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Character.m; path = Source/Character.m; sourceTree = SOURCE_ROOT; };
+		0152CB7E1AC3A02C002ED895 /* StartScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StartScene.h; sourceTree = SOURCE_ROOT; };
+		0152CB811AC3A062002ED895 /* StartScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartScene.m; sourceTree = SOURCE_ROOT; };
+		01DD163E1A9AD6DC00E618A6 /* Ball.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Ball.m; path = Source/Ball.m; sourceTree = SOURCE_ROOT; };
+		01DD16441A9AD6F200E618A6 /* Ball.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ball.h; sourceTree = SOURCE_ROOT; };
+		01E597F01AF456220099000B /* PausedScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PausedScene.h; sourceTree = SOURCE_ROOT; };
+		01E597F31AF456380099000B /* PausedScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PausedScene.m; path = Source/PausedScene.m; sourceTree = SOURCE_ROOT; };
 		5B12100919748273004C1E1D /* libEGL.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libEGL.so; path = /usr/lib/armv7a/libEGL.so; sourceTree = SDKROOT; };
 		5B12100F197483EE004C1E1D /* ic_launcher.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_launcher.png; sourceTree = "<group>"; };
 		5B121011197483EE004C1E1D /* ic_launcher.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_launcher.png; sourceTree = "<group>"; };
@@ -214,8 +214,8 @@
 		B737896E180762440076A88C /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "Source/Resources/Default@2x.png"; sourceTree = SOURCE_ROOT; };
 		B73789851807631A0076A88C /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Source/Platforms/iOS/main.m; sourceTree = SOURCE_ROOT; };
 		B73789861807631A0076A88C /* Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Prefix.pch; path = Source/Prefix.pch; sourceTree = SOURCE_ROOT; };
-		B7378992180767190076A88C /* MainScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainScene.h; path = Source/MainScene.h; sourceTree = "<group>"; };
-		B7378993180767190076A88C /* MainScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainScene.m; path = Source/MainScene.m; sourceTree = "<group>"; };
+		B7378992180767190076A88C /* MainScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainScene.h; path = Source/MainScene.h; sourceTree = SOURCE_ROOT; };
+		B7378993180767190076A88C /* MainScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainScene.m; path = Source/MainScene.m; sourceTree = SOURCE_ROOT; };
 		B77F1B2E17B978D7009739AE /* CrazyJelly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CrazyJelly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B77F1B3117B978D7009739AE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B77F1B3317B978D7009739AE /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -457,9 +457,10 @@
 		B737893C1807616C0076A88C /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				D352B48019EC608A00829775 /* MetalShaders */,
+				7A40362019DDEF0D007B6E8F /* Platforms */,
 				01230D0A1ACA65A400E864B4 /* GlobalData.h */,
 				01230D081ACA64BD00E864B4 /* GlobalData.m */,
-				7A40362019DDEF0D007B6E8F /* Platforms */,
 				B7378992180767190076A88C /* MainScene.h */,
 				B7378993180767190076A88C /* MainScene.m */,
 				01230D0B1ACB4DBA00E864B4 /* HelpScene.h */,
@@ -472,7 +473,6 @@
 				01DD163E1A9AD6DC00E618A6 /* Ball.m */,
 				013E995C1A9AD7B700ED4D88 /* Character.h */,
 				013E995F1A9AD80100ED4D88 /* Character.m */,
-				D352B48019EC608A00829775 /* MetalShaders */,
 				01E597F01AF456220099000B /* PausedScene.h */,
 				01E597F31AF456380099000B /* PausedScene.m */,
 			);

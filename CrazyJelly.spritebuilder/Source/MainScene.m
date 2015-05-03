@@ -168,7 +168,7 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     [_physicsNode addChild:sprite];
     
     _character = sprite;
-    CCActionFadeIn *fadeInAction = [CCActionFadeIn actionWithDuration:0.25];
+    CCActionFadeIn *fadeInAction = [CCActionFadeIn actionWithDuration:0.10];
     [_character runAction:fadeInAction];
 }
 
@@ -711,8 +711,8 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     
     [self addChild:lblForMessage];
     
-    CCActionFadeOut *fadeAction = [CCActionFadeOut actionWithDuration:0.5];
-    CCActionMoveBy *moveUpAction = [CCActionMoveBy actionWithDuration:5 position:ccp(0, 10)];
+    CCActionFadeOut *fadeAction = [CCActionFadeOut actionWithDuration:0.1];
+    CCActionMoveBy *moveUpAction = [CCActionMoveBy actionWithDuration:0.1 position:ccp(0, 10)];
     CCActionRemove *removeAction = [CCActionRemove action];
     
     CCActionSpawn *spawnAction = [CCActionSpawn actionWithArray:@[fadeAction, moveUpAction]];
@@ -745,13 +745,13 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
 }
 -(void) bounceCharacter{
     
-    CCActionMoveBy *moveBy = [CCActionMoveBy actionWithDuration:0.15f position:ccp(-5, 5)];
+    CCActionMoveBy *moveBy = [CCActionMoveBy actionWithDuration:0.1f position:ccp(-5, 5)];
     CCActionInterval *reverseMovement = [moveBy reverse];
     CCActionSequence *shakeSequence = [CCActionSequence actionWithArray:@[moveBy, reverseMovement]];
     CCActionEaseBounce *bounce = [CCActionEaseBounce actionWithAction:shakeSequence];
     [self runAction:bounce];
     
-    CCActionRotateBy *rotateBy = [CCActionRotateBy actionWithDuration:0.15f angle:360];
+    CCActionRotateBy *rotateBy = [CCActionRotateBy actionWithDuration:0.1f angle:360];
     [_character runAction:rotateBy];
 }
 -(void) fadeInNewCharacter:(NSString *)color{
