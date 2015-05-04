@@ -12,7 +12,7 @@
 #define MAX_BALLS_IN_ROW 3
 #define SPECIALBALL_FREQUENCY 15
 #define MUSHROOM_FREQUENCY 5
-#define START_MUSHROOM_LEVEL 30
+#define START_MUSHROOM_LEVEL 40
 
 typedef enum  {EASY, MEDIUM, TOUGH, RANDOM} RowType;
 
@@ -467,6 +467,10 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     // get the x location of touch and move the character there.
     if(!_gameOver){
         
+        if(_onboardingNode.visible){
+            [self hideOnboarding];
+        }
+            
         _skipRowsLabel.visible = false;
         
         CGPoint touchLocation = [touch locationInNode:self];
@@ -711,8 +715,8 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     
     [self addChild:lblForMessage];
     
-    CCActionFadeOut *fadeAction = [CCActionFadeOut actionWithDuration:0.1];
-    CCActionMoveBy *moveUpAction = [CCActionMoveBy actionWithDuration:0.1 position:ccp(0, 10)];
+    CCActionFadeOut *fadeAction = [CCActionFadeOut actionWithDuration:0.15];
+    CCActionMoveBy *moveUpAction = [CCActionMoveBy actionWithDuration:0.15 position:ccp(0, 10)];
     CCActionRemove *removeAction = [CCActionRemove action];
     
     CCActionSpawn *spawnAction = [CCActionSpawn actionWithArray:@[fadeAction, moveUpAction]];
@@ -745,14 +749,17 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
 }
 -(void) bounceCharacter{
     
-    CCActionMoveBy *moveBy = [CCActionMoveBy actionWithDuration:0.1f position:ccp(-5, 5)];
-    CCActionInterval *reverseMovement = [moveBy reverse];
-    CCActionSequence *shakeSequence = [CCActionSequence actionWithArray:@[moveBy, reverseMovement]];
-    CCActionEaseBounce *bounce = [CCActionEaseBounce actionWithAction:shakeSequence];
-    [self runAction:bounce];
+//    CCActionMoveBy *moveBy = [CCActionMoveBy actionWithDuration:0.1f position:ccp(-5, 5)];
+//    CCActionInterval *reverseMovement = [moveBy reverse];
+//    CCActionSequence *shakeSequence = [CCActionSequence actionWithArray:@[moveBy, reverseMovement]];
+//    CCActionEaseBounce *bounce = [CCActionEaseBounce actionWithAction:shakeSequence];
+//    [self runAction:bounce];
     
-    CCActionRotateBy *rotateBy = [CCActionRotateBy actionWithDuration:0.1f angle:360];
+    CCActionRotateBy *rotateBy = [CCActionRotateBy actionWithDuration:0.15f angle:360];
     [_character runAction:rotateBy];
+    
+    [[CCDirector sharedDirector] performSelector:@selector(resume) withObject:nil afterDelay:0.15f];
+    [[CCDirector sharedDirector] pause];
 }
 -(void) fadeInNewCharacter:(NSString *)color{
 //    CCActionFadeOut *fadeOutAction = [CCActionFadeOut actionWithDuration:0.10];
