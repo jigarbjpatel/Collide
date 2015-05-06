@@ -151,9 +151,11 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
         return;
     NSString* spriteName = [NSString stringWithFormat:@"%@%@%@", @"Resources/Characters/", spriteColor, @".png"];
     CCSprite *sprite = [CCSprite spriteWithImageNamed:spriteName];
+    [sprite setUserObject:spriteColor];
+    
     sprite.positionType = CCPositionTypeMake(CCPositionTypeNormalized.xUnit,
                                              CCPositionTypePoints.yUnit, CCPositionReferenceCornerBottomLeft);
-    [sprite setUserObject:spriteColor];
+    
 
     sprite.position = ccp(xPos, 50);
     sprite.zOrder = 100;
@@ -164,12 +166,13 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
     sprite.physicsBody = [CCPhysicsBody bodyWithRect:rect cornerRadius:0 ];
 //    sprite.physicsBody.type = CCPhysicsBodyTypeStatic;
     sprite.physicsBody.type = CCPhysicsBodyTypeKinematic;
+//    sprite.physicsBody.allowsRotation = NO;
     sprite.physicsBody.collisionType = @"character";
     [_physicsNode addChild:sprite];
     
     _character = sprite;
-    CCActionFadeIn *fadeInAction = [CCActionFadeIn actionWithDuration:0.10];
-    [_character runAction:fadeInAction];
+    
+    
 }
 
 - (void)addNewBall:(NSString *)spriteColor xPosition:(CGFloat)xPos{
@@ -423,7 +426,7 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
                     double scaleBy = (1.0 - (double)((double)_rowsAddedSinceLastCollision / (double)MAX_ROWS_THAT_CAN_BE_SKIPPED)) + 0.10;
                     id scaleDownAction = [CCActionEaseInOut
                                           actionWithAction:[CCActionScaleTo actionWithDuration:0.1 scaleX:scaleBy scaleY:scaleBy]
-                                          rate:2.0];
+                                          rate:2];
                     id blinkAction = [CCActionBlink actionWithDuration:0.1 blinks:1];
                     
                     [_character runAction:scaleDownAction];
@@ -768,8 +771,12 @@ static CGFloat _ballPositionsX[MAX_BALLS_IN_ROW] = { 0.12, 0.5, 0.88};
 //    CCActionSequence *sequenceAction = [CCActionSequence actionWithArray:@[fadeOutAction, removeAction, delay]];
 //    [_character runAction:sequenceAction];
     
+    CGFloat oldXPosition = _character.position.x;
     [_character removeFromParent];
-    [self addNewCharacter:color xPosition:_character.position.x];
+    [self addNewCharacter:color xPosition:oldXPosition];
+    
+    CCActionFadeIn *fadeInAction = [CCActionFadeIn actionWithDuration:0.10];
+    [_character runAction:fadeInAction];
 }
 - (void) ballRemoved:(CCNode *)ball {
     // load particle effect
